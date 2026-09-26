@@ -1,6 +1,6 @@
 # Tyler Mulvey · Aerial 360
 
-Your 360s sit on a ring around you. Scroll or drag to turn it, click a card to fly into that sphere, then drag or scroll to look around. Esc or "back to the ring" takes you out. Arrow keys and Enter work too.
+A list of your 360s on the left, thumbnail and details for whichever one you're pointed at on the right. Search narrows the list by town, state, year, or season. Click (or tap) any entry and it morphs full screen into that panorama — drag or scroll to look around, Esc or "back to the list" to leave.
 
 No build step: `index.html`, `style.css`, `script.js`, and three.js from a CDN.
 
@@ -10,9 +10,13 @@ Titles use **Azonix** by Mixo (free for personal use; commercial use needs a lic
 
 Everything else (locations, dates, buttons, hints) uses **Lemon Milk** by MARSNEV (donationware — free for personal/non-commercial use, a donation is asked for commercial use, see https://www.marsnev.com). This free version has no lowercase letters, so it always renders as capitals — that's why it still looks right even though the CSS says `text-transform: lowercase`.
 
+## Search
+
+The search box (top right while browsing) matches whatever's typed against each entry's town, state — full name or abbreviation — year, or season, all pulled from `location` and `date` in `gallery.json`. No extra fields needed. Non-matches drop out of the list; the detail pane jumps to the first match, or explains when there isn't one.
+
 ## Controls
 
-Top right: **hide text while turning** (the words fade while you scroll or drag, and the setting is remembered) and **full screen** (or press F). iPhone Safari doesn't allow full screen for web pages, so the button hides itself there.
+Inside a panorama: **zoom** with the scroll wheel, a trackpad or touchscreen pinch, the + / − buttons, or the + / − keys (0 resets, double-click toggles a close-up). Dragging slows down as you zoom in so the view stays under your finger. Also **hide text while turning** (the words fade while you drag or scroll to look around, and the setting is remembered) and **full screen** (or press F), top right. iPhone Safari doesn't allow full screen for web pages, so that button hides itself there. Esc or the "back to the list" button (top left) takes you out.
 
 ## Preview
 
@@ -25,7 +29,7 @@ Open http://localhost:8000. Double-clicking `index.html` won't work because brow
 ## Add a 360
 
 1. Put the stitched 2:1 panorama in `media/360/`.
-2. Put a portrait card image (600x800, a slice of the pano around the horizon) in `media/360/thumbs/`. The card should show the middle of the pano, because that's the direction you land facing when you click in.
+2. Put a portrait card image (600x800, a slice of the pano around the horizon) in `media/360/thumbs/`. It's what shows in the list and detail pane, and it should show the middle of the pano, because that's the direction you land facing when you step inside.
 3. Add an entry at the top of `panoramas` in `gallery.json`:
 
 ```json
@@ -41,4 +45,4 @@ Got a round "little planet" from DJI Fly instead of a flat 2:1 image? `python3 u
 
 ## Deploy
 
-Drag this folder onto https://app.netlify.com/drop. For a custom domain, buy one (~$10-12/yr) and add it in Netlify's site settings.
+Live at mulvey.world via GitHub Pages (`CNAME` points it there). Push to `main` and Pages redeploys automatically; DNS is set up at Namecheap.

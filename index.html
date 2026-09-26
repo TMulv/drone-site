@@ -4,38 +4,58 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tyler Mulvey · Aerial 360</title>
-<meta name="description" content="Drone 360° panoramas by Tyler Mulvey. Scroll to turn the ring, click to step inside.">
+<meta name="description" content="Drone 360° panoramas by Tyler Mulvey. Browse by town, state, year, or season, then step inside any one full screen.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<canvas id="scene"></canvas>
 <div class="grain" aria-hidden="true"></div>
 
 <header>
   <div class="mark">Tyler Mulvey<span>aerial 360 · dji mini 4k</span></div>
-  <div class="compass" aria-hidden="true">
+  <div class="compass" id="compassWrap" aria-hidden="true" hidden>
     <div class="tape" id="tape"></div>
     <div class="hdg"><span id="hdg">000</span>°</div>
   </div>
-  <nav class="controls">
+  <nav class="controls" id="browseControls">
+    <div class="search">
+      <input id="search" type="text" placeholder="search town, state, year, season" autocomplete="off" spellcheck="false" enterkeyhint="search">
+      <span id="searchCount" aria-live="polite"></span>
+      <button id="searchClear" class="clear" type="button" hidden aria-label="clear search">&times;</button>
+    </div>
+  </nav>
+  <nav class="controls" id="viewerControls" hidden>
+    <div class="zoom">
+      <button id="zoomOut" class="pill" type="button" aria-label="zoom out">&minus;</button>
+      <button id="zoomIn" class="pill" type="button" aria-label="zoom in">+</button>
+    </div>
     <button id="quiet" class="pill" aria-pressed="false">hide text while turning</button>
     <button id="fs" class="pill" hidden>full screen</button>
   </nav>
 </header>
 
-<button id="back" class="back" hidden>← back to the ring</button>
+<main id="browse">
+  <ul id="entries"></ul>
+  <aside class="detail" id="detail">
+    <img id="detailImg" alt="">
+    <h2 id="detailTitle">&nbsp;</h2>
+    <div class="meta" id="detailMeta"></div>
+    <button class="enter" id="detailEnter" type="button">step inside</button>
+  </aside>
+</main>
 
-<footer id="caption" aria-live="polite">
-  <div class="count">no. <span id="idx">01</span><i></i><span id="total">20</span></div>
-  <h1 id="title">&nbsp;</h1>
-  <div class="meta" id="meta">&nbsp;</div>
-  <div class="hint" id="hint">scroll to turn · click to step inside</div>
-</footer>
-
-<div id="loader"><span>calibrating gimbal</span></div>
+<div id="viewer" hidden>
+  <canvas id="scene"></canvas>
+  <button id="back" class="back" hidden>← back to the list</button>
+  <footer id="caption" aria-live="polite">
+    <div class="count">no. <span id="idx">01</span><i></i><span id="total">20</span></div>
+    <h1 id="title">&nbsp;</h1>
+    <div class="meta" id="meta">&nbsp;</div>
+    <div class="hint" id="hint">drag to look around · scroll to zoom · esc to leave</div>
+  </footer>
+</div>
 
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js" } }
