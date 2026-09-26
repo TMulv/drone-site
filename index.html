@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aerial — Drone Photo &amp; 360 Portfolio</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.15.1/index.css">
+</head>
+<body>
+
+<header>
+  <h1>YOUR NAME</h1>
+  <nav>
+    <button data-tab="photos" class="tab active">Photos</button>
+    <button data-tab="panoramas" class="tab">360&deg; Photos</button>
+    <button data-tab="videos360" class="tab">360&deg; Video</button>
+    <button data-tab="about" class="tab">About</button>
+  </nav>
+</header>
+
+<main>
+  <section id="photos" class="panel active"><div class="grid" id="photos-grid"></div></section>
+  <section id="panoramas" class="panel"><div class="grid" id="panoramas-grid"></div></section>
+  <section id="videos360" class="panel"><div class="grid" id="videos360-grid"></div></section>
+  <section id="about" class="panel">
+    <p>Drone pilot. Add your bio here — edit the #about section in index.html.</p>
+  </section>
+</main>
+
+<div id="lightbox" class="lightbox hidden">
+  <button id="lightbox-close">&times;</button>
+  <div id="lightbox-body"></div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+  "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.15.1/index.module.js"
+} }
+</script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
