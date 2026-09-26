@@ -1,6 +1,5 @@
 // Run: node validate.js
-// Catches the #1 way this site breaks — a typo in gallery.json (trailing comma, missing quote, missing file).
-// No deps, no framework: it's the one check this project needs.
+// Catches the #1 way this site breaks: a typo in gallery.json (trailing comma, missing quote, missing file).
 const fs = require('fs');
 
 let data;
@@ -12,31 +11,10 @@ try {
 }
 
 let errors = 0;
-function check(list, name, requiredField) {
-  (list || []).forEach((item, i) => {
-    if (!item[requiredField]) {
-      console.error(`${name}[${i}] is missing "${requiredField}":`, item);
-      errors++;
-      return;
-    }
-    if (requiredField !== 'youtubeId' && !fs.existsSync(item[requiredField])) {
-      console.error(`${name}[${i}] points to a file that doesn't exist: ${item[requiredField]}`);
-      errors++;
-    }
-  });
-}
-
-check(data.photos, 'photos', 'file');
-check((data.panoramas || []).filter(p => !p.skypixel), 'panoramas', 'file');
-(data.panoramas || []).filter(p => p.skypixel).forEach((p, i) => {
-  if (!/^https:\/\/www\.skypixel\.com\//.test(p.skypixel)) { console.error(`skypixel entry ${i} isn't a skypixel.com link:`, p.skypixel); errors++; }
-  if (p.thumb && !fs.existsSync(p.thumb)) { console.error(`skypixel entry ${i} thumb not found: ${p.thumb}`); errors++; }
+(data.panoramas || []).forEach((p, i) => {
+  for (const key of ['location', 'file']) if (!p[key]) { console.error(`panoramas[${i}] is missing "${key}"`); errors++; }
+  for (const key of ['file', 'thumb']) if (p[key] && !fs.existsSync(p[key])) { console.error(`panoramas[${i}] ${key} not found: ${p[key]}`); errors++; }
 });
-check(data.videos360, 'videos360', 'youtubeId');
 
-if (errors === 0) {
-  console.log('gallery.json looks good.');
-} else {
-  console.error(`${errors} problem(s) found. Fix gallery.json before deploying.`);
-  process.exit(1);
-}
+if (errors) { console.error(`${errors} problem(s). Fix gallery.json before deploying.`); process.exit(1); }
+console.log(`gallery.json looks good (${data.panoramas.length} panoramas).`);

@@ -1,7 +1,164 @@
 {
-  "photos": [],
   "panoramas": [
-    { "title": "Storm Over the Pines", "file": "media/360/storm-over-the-pines.jpg", "location": "", "date": "" }
-  ],
-  "videos360": []
+    {
+      "file": "media/360/pines-and-peaks.jpg",
+      "thumb": "media/360/thumbs/pines-and-peaks.jpg",
+      "location": "Ward, CO",
+      "date": "Sep 19, 2026",
+      "time": "4:10 pm",
+      "alt": "32 m"
+    },
+    {
+      "file": "media/360/storm-over-the-pines.jpg",
+      "thumb": "media/360/thumbs/storm-over-the-pines.jpg",
+      "location": "Ward, CO",
+      "date": "Sep 18, 2026",
+      "time": "3:43 pm",
+      "alt": "42 m"
+    },
+    {
+      "file": "media/360/rocky-mountain-sunrise.jpg",
+      "thumb": "media/360/thumbs/rocky-mountain-sunrise.jpg",
+      "location": "Ward, CO",
+      "date": "Sep 18, 2026",
+      "time": "6:49 am",
+      "alt": "24 m"
+    },
+    {
+      "file": "media/360/wooded-driveway.jpg",
+      "thumb": "media/360/thumbs/wooded-driveway.jpg",
+      "location": "West Milford, NJ",
+      "date": "Sep 7, 2026",
+      "time": "7:08 pm",
+      "alt": "7 m"
+    },
+    {
+      "file": "media/360/evening-contrails.jpg",
+      "thumb": "media/360/thumbs/evening-contrails.jpg",
+      "location": "West Milford, NJ",
+      "date": "Sep 7, 2026",
+      "time": "7:01 pm",
+      "alt": "115 m"
+    },
+    {
+      "file": "media/360/sun-over-the-forest.jpg",
+      "thumb": "media/360/thumbs/sun-over-the-forest.jpg",
+      "location": "West Milford, NJ",
+      "date": "Sep 7, 2026",
+      "time": "4:38 pm",
+      "alt": "115 m"
+    },
+    {
+      "file": "media/360/farmhouse-and-barn.jpg",
+      "thumb": "media/360/thumbs/farmhouse-and-barn.jpg",
+      "location": "Goldens Bridge, NY",
+      "date": "Sep 5, 2026",
+      "time": "3:18 pm",
+      "alt": "7 m"
+    },
+    {
+      "file": "media/360/farmhouse.jpg",
+      "thumb": "media/360/thumbs/farmhouse.jpg",
+      "location": "Goldens Bridge, NY",
+      "date": "Sep 5, 2026",
+      "time": "3:17 pm",
+      "alt": "7 m"
+    },
+    {
+      "file": "media/360/rooftop-view.jpg",
+      "thumb": "media/360/thumbs/rooftop-view.jpg",
+      "location": "Goldens Bridge, NY",
+      "date": "Sep 5, 2026",
+      "time": "3:13 pm",
+      "alt": "102 m"
+    },
+    {
+      "file": "media/360/fields-and-lakes.jpg",
+      "thumb": "media/360/thumbs/fields-and-lakes.jpg",
+      "location": "Goldens Bridge, NY",
+      "date": "Sep 5, 2026",
+      "time": "3:07 pm",
+      "alt": "76 m"
+    },
+    {
+      "file": "media/360/backyard-patio.jpg",
+      "thumb": "media/360/thumbs/backyard-patio.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Aug 15, 2026",
+      "time": "7:57 pm",
+      "alt": "5 m"
+    },
+    {
+      "file": "media/360/sunset-over-the-suburbs.jpg",
+      "thumb": "media/360/thumbs/sunset-over-the-suburbs.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Aug 15, 2026",
+      "time": "7:49 pm",
+      "alt": "93 m"
+    },
+    {
+      "file": "media/360/street-level-sunset.jpg",
+      "thumb": "media/360/thumbs/street-level-sunset.jpg",
+      "location": "Hawthorne, NJ",
+      "date": "Aug 14, 2026",
+      "time": "8:12 pm",
+      "alt": "13 m"
+    },
+    {
+      "file": "media/360/neighborhood-sunset.jpg",
+      "thumb": "media/360/thumbs/neighborhood-sunset.jpg",
+      "location": "Hawthorne, NJ",
+      "date": "Aug 14, 2026",
+      "time": "8:07 pm",
+      "alt": "29 m"
+    },
+    {
+      "file": "media/360/gray-day-over-the-ridge.jpg",
+      "thumb": "media/360/thumbs/gray-day-over-the-ridge.jpg",
+      "location": "West Milford, NJ",
+      "date": "Aug 2, 2026",
+      "time": "5:45 pm",
+      "alt": "79 m"
+    },
+    {
+      "file": "media/360/overcast-hills.jpg",
+      "thumb": "media/360/thumbs/overcast-hills.jpg",
+      "location": "West Milford, NJ",
+      "date": "Aug 2, 2026",
+      "time": "5:34 pm",
+      "alt": "78 m"
+    },
+    {
+      "file": "media/360/pond-and-treetops.jpg",
+      "thumb": "media/360/thumbs/pond-and-treetops.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Aug 2, 2026",
+      "time": "1:51 pm",
+      "alt": "41 m"
+    },
+    {
+      "file": "media/360/mountaintop-house.jpg",
+      "thumb": "media/360/thumbs/mountaintop-house.jpg",
+      "location": "Maggie Valley, NC",
+      "date": "Jul 31, 2026",
+      "time": "2:33 pm",
+      "alt": "7 m"
+    },
+    {
+      "file": "media/360/above-the-ridge.jpg",
+      "thumb": "media/360/thumbs/above-the-ridge.jpg",
+      "location": "Maggie Valley, NC",
+      "date": "Jul 28, 2026",
+      "time": "8:38 pm",
+      "alt": "28 m"
+    },
+    {
+      "file": "media/360/misty-ridge-at-dusk.jpg",
+      "thumb": "media/360/thumbs/misty-ridge-at-dusk.jpg",
+      "location": "Maggie Valley, NC",
+      "date": "Jul 28, 2026",
+      "time": "8:35 pm",
+      "alt": "8 m"
+    }
+  ]
 }

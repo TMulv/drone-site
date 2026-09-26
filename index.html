@@ -3,41 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aerial — Drone Photo &amp; 360 Portfolio</title>
+<title>Tyler Mulvey · Aerial 360</title>
+<meta name="description" content="Drone 360° panoramas by Tyler Mulvey. Scroll to turn the ring, click to step inside.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&display=swap">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.15.1/index.css">
 </head>
 <body>
+<canvas id="scene"></canvas>
+<div class="grain" aria-hidden="true"></div>
 
 <header>
-  <h1>YOUR NAME</h1>
-  <nav>
-    <button data-tab="photos" class="tab active">Photos</button>
-    <button data-tab="panoramas" class="tab">360&deg; Photos</button>
-    <button data-tab="videos360" class="tab">360&deg; Video</button>
-    <button data-tab="about" class="tab">About</button>
+  <div class="mark">Tyler Mulvey<span>aerial 360 · dji mini 4k</span></div>
+  <div class="compass" aria-hidden="true">
+    <div class="tape" id="tape"></div>
+    <div class="hdg"><span id="hdg">000</span>°</div>
+  </div>
+  <nav class="controls">
+    <button id="quiet" class="pill" aria-pressed="false">hide text while turning</button>
+    <button id="fs" class="pill" hidden>full screen</button>
   </nav>
 </header>
 
-<main>
-  <section id="photos" class="panel active"><div class="grid" id="photos-grid"></div></section>
-  <section id="panoramas" class="panel"><div class="grid" id="panoramas-grid"></div></section>
-  <section id="videos360" class="panel"><div class="grid" id="videos360-grid"></div></section>
-  <section id="about" class="panel">
-    <p>Drone pilot. Add your bio here — edit the #about section in index.html.</p>
-  </section>
-</main>
+<button id="back" class="back" hidden>← back to the ring</button>
 
-<div id="lightbox" class="lightbox hidden">
-  <button id="lightbox-close">&times;</button>
-  <div id="lightbox-body"></div>
-</div>
+<footer id="caption" aria-live="polite">
+  <div class="count">no. <span id="idx">01</span><i></i><span id="total">20</span></div>
+  <h1 id="title">&nbsp;</h1>
+  <div class="meta" id="meta">&nbsp;</div>
+  <div class="hint" id="hint">scroll to turn · click to step inside</div>
+</footer>
+
+<div id="loader"><span>calibrating gimbal</span></div>
 
 <script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
-  "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.15.1/index.module.js"
-} }
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js" } }
 </script>
 <script type="module" src="script.js"></script>
 </body>
