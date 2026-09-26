@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -37,12 +38,26 @@
 </header>
 
 <main id="browse">
-  <ul id="entries"></ul>
+  <section class="list">
+    <div class="sortbar" role="group" aria-label="sort">
+      <span class="sortLabel">sort</span>
+      <button class="sort" type="button" data-sort="date">date</button>
+      <button class="sort" type="button" data-sort="city">city</button>
+      <button class="sort" type="button" data-sort="state">state</button>
+      <button class="dir" id="sortDir" type="button" aria-label="reverse sort order"></button>
+    </div>
+    <ul id="entries"></ul>
+  </section>
   <aside class="detail" id="detail">
-    <img id="detailImg" alt="">
-    <h2 id="detailTitle">&nbsp;</h2>
-    <div class="meta" id="detailMeta"></div>
-    <button class="enter" id="detailEnter" type="button">step inside</button>
+    <button class="photo" id="detailPhoto" type="button">
+      <img id="detailImg" alt="">
+      <span class="photoHint">step inside</span>
+    </button>
+    <div class="detailText">
+      <h2 id="detailTitle">&nbsp;</h2>
+      <div class="meta" id="detailMeta"></div>
+    </div>
+    <div id="map" class="map" aria-label="map of where the 360s were shot"></div>
   </aside>
 </main>
 
@@ -57,6 +72,7 @@
   </footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js" } }
 </script>

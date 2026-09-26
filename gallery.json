@@ -1,4 +1,12 @@
 {
+  "towns": {
+    "Ward, CO": [40.0725, -105.5092],
+    "West Milford, NJ": [41.1312, -74.3674],
+    "Goldens Bridge, NY": [41.2937, -73.6776],
+    "Wyckoff, NJ": [41.0098, -74.1729],
+    "Hawthorne, NJ": [40.9493, -74.1537],
+    "Maggie Valley, NC": [35.5184, -83.0977]
+  },
   "panoramas": [
     {
       "file": "media/360/pines-and-peaks.jpg",

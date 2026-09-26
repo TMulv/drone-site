@@ -1,6 +1,6 @@
 # Tyler Mulvey · Aerial 360
 
-A list of your 360s on the left, thumbnail and details for whichever one you're pointed at on the right. Search narrows the list by town, state, year, or season. Click (or tap) any entry and it morphs full screen into that panorama — drag or scroll to look around, Esc or "back to the list" to leave.
+A sortable list of your 360s on the left (by date, city, or state; click the active sort again to flip it). Pick one and the right side shows its photo, details, and a map of where it was shot. Click the photo and it grows full screen into the panorama: drag to look around, scroll or pinch to zoom, Esc or "back to the list" to leave. On phones there's no right side, so tapping a row steps straight in.
 
 No build step: `index.html`, `style.css`, `script.js`, and three.js from a CDN.
 
@@ -13,6 +13,10 @@ Everything else (locations, dates, buttons, hints) uses **Lemon Milk** by MARSNE
 ## Search
 
 The search box (top right while browsing) matches whatever's typed against each entry's town, state — full name or abbreviation — year, or season, all pulled from `location` and `date` in `gallery.json`. No extra fields needed. Non-matches drop out of the list; the detail pane jumps to the first match, or explains when there isn't one.
+
+## Map
+
+Leaflet (loaded from cdnjs) with CARTO's light basemap, tinted warm in `style.css`. Pins sit on town centers from `towns` in `gallery.json`. Clicking a pin selects that town's first 360 in the list; searching hides pins with no matches.
 
 ## Controls
 
@@ -37,7 +41,13 @@ Open http://localhost:8000. Double-clicking `index.html` won't work because brow
   "location": "Town, ST", "date": "Oct 1, 2026", "time": "6:12 pm", "alt": "40 m" }
 ```
 
-4. Run `node validate.js` to catch typos and missing files.
+4. New town? Add it to `towns` at the top of `gallery.json` with the town center's coordinates (right-click the town on Google Maps to copy them). That's what places the map pin. Only town centers go here, never the drone's GPS:
+
+```json
+"Town, ST": [41.0098, -74.1729]
+```
+
+5. Run `node validate.js` to catch typos and missing files.
 
 Simplest option: drop the SD card folder into a chat with Claude and ask for the new sets to be stitched and added.
 

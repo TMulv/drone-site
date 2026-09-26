@@ -50,16 +50,17 @@ scene.add(sphere);
 
 // ---------- state ----------
 let items = [];
-let matched = null; // null = no search active; else one bool per item
 let mode = 'browse'; // browse | entering | pano | leaving
 let active = -1;
 let lon = 0, lat = 0, vLon = 0, vLat = 0; // look direction inside a pano (degrees)
 
 // ---------- DOM ----------
 const browseEl = $('browse'), viewerEl = $('viewer'), entriesEl = $('entries');
-const detailImg = $('detailImg'), detailTitle = $('detailTitle'), detailMeta = $('detailMeta'), detailEnter = $('detailEnter');
+const detailPhoto = $('detailPhoto'), detailImg = $('detailImg'), detailTitle = $('detailTitle'), detailMeta = $('detailMeta');
 const searchBox = $('search'), searchClear = $('searchClear'), searchCount = $('searchCount');
 const compassWrap = $('compassWrap'), backBtn = $('back'), hintEl = $('hint');
+const mapEl = $('map'), sortDirBtn = $('sortDir');
+const phoneLayout = matchMedia('(max-width: 780px)'); // no detail pane there: tapping a row steps straight in
 
 function metaLine(it) {
   return [it.date, it.time, it.alt && it.alt + ' up'].filter(Boolean);
@@ -68,22 +69,36 @@ function fillMeta(el, it) {
   el.replaceChildren(...metaLine(it).map(t => Object.assign(document.createElement('span'), { textContent: t })));
 }
 
-// ---------- load the gallery and build the list ----------
+// "Sep 19, 2026" + "4:10 pm" -> Date, parsed by hand so Safari and Chrome agree
+const MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+function parseWhen(it) {
+  const d = /([a-z]{3})[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})/i.exec(it.date || '');
+  if (!d || MONTHS[d[1].toLowerCase()] === undefined) return null;
+  const t = /(\d{1,2}):(\d{2})\s*([ap])/i.exec(it.time || '');
+  const h = t ? (+t[1] % 12) + (t[3].toLowerCase() === 'p' ? 12 : 0) : 0;
+  return new Date(+d[3], MONTHS[d[1].toLowerCase()], +d[2], h, t ? +t[2] : 0);
+}
+
+// ---------- load the gallery ----------
 const data = await fetch('gallery.json').then(r => r.json());
 items = data.panoramas || [];
+const towns = data.towns || {}; // "Town, ST" -> [lat, lng] of the town center, for the map
 items.forEach(it => {
-  const [town, st] = (it.location || '').split(',').map(s => s && s.trim());
-  const when = it.date ? new Date(it.date) : null;
-  const ok = when && !isNaN(when);
-  it._search = [town, st, st && STATE_NAME[st.toLowerCase()], ok && when.getFullYear(), ok && SEASON_BY_MONTH[when.getMonth()], it.location]
+  const [town = '', st = ''] = (it.location || '').split(',').map(s => s.trim());
+  it._town = town;
+  it._state = STATE_NAME[st.toLowerCase()] || st;
+  it._when = parseWhen(it);
+  it._search = [town, st, it._state, it._when && it._when.getFullYear(), it._when && SEASON_BY_MONTH[it._when.getMonth()], it.location]
     .filter(Boolean).join(' ').toLowerCase();
 });
 $('total').textContent = pad(items.length);
 
-items.forEach((it, i) => {
-  const li = document.createElement('li');
+// ---------- list rows (built once, reordered by sorting) ----------
+let sel = -1; // the selected entry, shown on the right
+const rows = items.map((it, i) => {
+  const li = document.createElement('li'); li.className = 'row';
   const btn = document.createElement('button');
-  btn.className = 'entry'; btn.type = 'button'; btn.dataset.i = String(i);
+  btn.className = 'entry'; btn.type = 'button';
   const img = document.createElement('img');
   img.src = it.thumb || it.file; img.alt = ''; img.loading = 'lazy';
   const text = document.createElement('span'); text.className = 'entryText';
@@ -91,46 +106,178 @@ items.forEach((it, i) => {
   const em = document.createElement('em'); em.textContent = metaLine(it).join(' · ');
   text.append(strong, em);
   btn.append(img, text);
-  btn.addEventListener('mouseenter', () => showDetail(i));
-  btn.addEventListener('focus', () => showDetail(i));
-  btn.addEventListener('click', () => enter(i));
+  btn.addEventListener('click', () => phoneLayout.matches ? enter(i, img) : select(i));
+  btn.addEventListener('dblclick', () => enter(i, detailImg));
+  btn.addEventListener('keydown', e => { if (e.key === 'Enter' && sel === i && !phoneLayout.matches) { e.preventDefault(); enter(i, detailImg); } });
   li.append(btn);
-  entriesEl.append(li);
+  return li;
 });
-if (items.length) showDetail(0);
 
-function showDetail(i) {
-  const it = items[i];
-  if (!it) return;
-  detailImg.style.display = ''; detailImg.src = it.thumb || it.file; detailImg.alt = it.location || '';
-  detailTitle.textContent = it.location || '';
-  fillMeta(detailMeta, it);
-  detailEnter.hidden = false;
-  detailEnter.onclick = () => enter(i);
+// ---------- sorting ----------
+const byDate = (a, b) => (b._when || 0) - (a._when || 0); // newest first
+const SORTS = {
+  date:  { cmp: byDate, group: it => it._when ? it._when.toLocaleString('en-US', { month: 'long', year: 'numeric' }) : 'undated', dir: ['newest first', 'oldest first'] },
+  city:  { cmp: (a, b) => a._town.localeCompare(b._town) || byDate(a, b), group: it => it.location, dir: ['a to z', 'z to a'] },
+  state: { cmp: (a, b) => a._state.localeCompare(b._state) || a._town.localeCompare(b._town) || byDate(a, b), group: it => it._state, dir: ['a to z', 'z to a'] },
+};
+let sortKey = 'date', sortRev = false, order = [];
+try { const s = JSON.parse(localStorage.getItem('sort')); if (s && SORTS[s.key]) { sortKey = s.key; sortRev = !!s.rev; } } catch {}
+
+function renderList() {
+  const s = SORTS[sortKey];
+  order = items.map((_, i) => i).sort((a, b) => s.cmp(items[a], items[b]));
+  if (sortRev) order.reverse();
+  const nodes = [];
+  let lastGroup = null;
+  for (const i of order) {
+    const g = s.group(items[i]);
+    if (g !== lastGroup) { nodes.push(Object.assign(document.createElement('li'), { className: 'group', textContent: g })); lastGroup = g; }
+    nodes.push(rows[i]);
+  }
+  entriesEl.replaceChildren(...nodes);
+  document.querySelectorAll('.sort').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sort === sortKey)));
+  sortDirBtn.textContent = s.dir[sortRev ? 1 : 0];
+  try { localStorage.setItem('sort', JSON.stringify({ key: sortKey, rev: sortRev })); } catch {}
+  filterRows();
 }
-function showEmptyDetail(query) {
-  detailImg.style.display = 'none'; detailImg.removeAttribute('src'); detailImg.alt = '';
-  detailTitle.textContent = 'nothing here';
-  detailMeta.replaceChildren(Object.assign(document.createElement('span'), { textContent: `try a different town, state, year, or season than "${query}"` }));
-  detailEnter.hidden = true; detailEnter.onclick = null;
-}
+document.querySelectorAll('.sort').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.sort === sortKey) sortRev = !sortRev; // clicking the active sort flips it
+  else { sortKey = b.dataset.sort; sortRev = false; }
+  renderList();
+}));
+sortDirBtn.addEventListener('click', () => { sortRev = !sortRev; renderList(); });
 
 // ---------- search ----------
+let matched = null; // null = no search active; else one bool per item
+const visible = i => !matched || matched[i];
+
+function filterRows() { // hide non-matching rows, and any group header left with nothing under it
+  rows.forEach((li, i) => { li.hidden = !visible(i); });
+  let header = null, any = false;
+  for (const li of entriesEl.children) {
+    if (li.classList.contains('group')) { if (header) header.hidden = !any; header = li; any = false; }
+    else if (!li.hidden) any = true;
+  }
+  if (header) header.hidden = !any;
+}
+
 function applySearch(raw) {
   const q = raw.trim().toLowerCase();
   searchClear.hidden = !q;
   matched = q ? items.map(it => it._search.includes(q)) : null;
-  [...entriesEl.children].forEach((li, i) => { li.hidden = !!matched && !matched[i]; });
-  if (!matched) { searchCount.textContent = ''; searchCount.classList.remove('empty'); if (items.length) showDetail(0); return; }
-  const first = matched.findIndex(Boolean);
-  const n = matched.filter(Boolean).length;
-  searchCount.textContent = n ? `${n} of ${items.length}` : 'no matches';
-  searchCount.classList.toggle('empty', n === 0);
-  first >= 0 ? showDetail(first) : showEmptyDetail(raw.trim());
+  filterRows();
+  const n = order.filter(visible).length;
+  searchCount.textContent = !q ? '' : n ? `${n} of ${items.length}` : 'no matches';
+  searchCount.classList.toggle('empty', !!q && n === 0);
+  updateMarkers();
+  fitMap();
+  if (n === 0) return showEmpty(raw.trim());
+  if (sel < 0 || !visible(sel)) select(order.find(visible), { pan: false });
 }
 searchBox.addEventListener('input', e => applySearch(e.target.value));
 searchClear.addEventListener('click', () => { searchBox.value = ''; applySearch(''); searchBox.focus(); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && document.activeElement === searchBox && searchBox.value) { searchBox.value = ''; applySearch(''); } });
+
+// ---------- the right pane ----------
+function select(i, { pan = true, scroll = false } = {}) {
+  const it = items[i];
+  if (!it) return;
+  if (sel >= 0) rows[sel].firstChild.removeAttribute('aria-current');
+  sel = i;
+  rows[i].firstChild.setAttribute('aria-current', 'true');
+  if (scroll) rows[i].scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+  detailPhoto.hidden = false;
+  detailPhoto.setAttribute('aria-label', `step inside the 360 from ${it.location}`);
+  detailImg.src = it.thumb || it.file; detailImg.alt = it.location || '';
+  detailTitle.textContent = it.location || '';
+  fillMeta(detailMeta, it);
+  highlightTown(it.location, pan);
+}
+function showEmpty(query) {
+  if (sel >= 0) rows[sel].firstChild.removeAttribute('aria-current');
+  sel = -1;
+  detailPhoto.hidden = true; detailImg.removeAttribute('src');
+  detailTitle.textContent = 'nothing here';
+  detailMeta.replaceChildren(Object.assign(document.createElement('span'), { textContent: `no town, state, year, or season matches "${query}"` }));
+  highlightTown(null, false);
+}
+detailPhoto.addEventListener('click', () => { if (sel >= 0) enter(sel, detailImg); });
+
+// up/down walks the list, enter steps in (while browsing, outside the search box)
+addEventListener('keydown', e => {
+  if (mode !== 'browse' || document.activeElement === searchBox || phoneLayout.matches) return;
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const vis = order.filter(visible);
+  if (!vis.length) return;
+  e.preventDefault();
+  const at = vis.indexOf(sel);
+  const next = vis[Math.max(0, Math.min(vis.length - 1, at + (e.key === 'ArrowDown' ? 1 : -1)))];
+  select(next, { scroll: true });
+  rows[next].firstChild.focus({ preventScroll: true });
+});
+
+// ---------- map (Leaflet; town centers only, never flight GPS) ----------
+let map = null;
+const markers = new Map(); // location -> circle marker
+let activeTown = null;
+const MARK = { radius: 6, color: '#1b1a17', weight: 1.5, fillColor: '#efebe4', fillOpacity: 1 };
+const MARK_ON = { radius: 9, color: '#1b1a17', weight: 1.5, fillColor: '#e2522b', fillOpacity: 1 };
+
+function ensureMap() { // built lazily: Leaflet can't size itself inside a hidden pane (phones)
+  if (map || !window.L || !mapEl.offsetWidth) return;
+  map = L.map(mapEl, { zoomSnap: 0.5, attributionControl: true });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd', maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  }).addTo(map);
+  for (const loc of new Set(items.map(it => it.location))) {
+    const ll = towns[loc];
+    if (!ll) continue;
+    const m = L.circleMarker(ll, MARK).addTo(map);
+    m.on('click', () => {
+      const i = order.find(j => items[j].location === loc && visible(j));
+      if (i !== undefined) select(i, { scroll: true });
+    });
+    markers.set(loc, m);
+  }
+  updateMarkers();
+  fitMap(false);
+  if (sel >= 0) highlightTown(items[sel].location, false);
+}
+addEventListener('resize', () => { ensureMap(); map && map.invalidateSize(); });
+
+function updateMarkers() { // hide towns a search filtered out; tooltip counts what's left
+  if (!map) return;
+  for (const [loc, m] of markers) {
+    const n = items.filter((it, i) => it.location === loc && visible(i)).length;
+    if (n && !map.hasLayer(m)) m.addTo(map);
+    if (!n && map.hasLayer(m)) m.remove();
+    m.unbindTooltip().bindTooltip(`${loc} · ${n} ${n === 1 ? '360' : '360s'}`, { direction: 'top', offset: [0, -8] });
+  }
+}
+function fitMap(animate = true) {
+  if (!map) return;
+  const pts = [...markers].filter(([, m]) => map.hasLayer(m)).map(([loc]) => towns[loc]);
+  if (!pts.length) return;
+  if (pts.length === 1) map.setView(pts[0], 10, { animate: animate && !reduceMotion });
+  else map.fitBounds(pts, { padding: [36, 36], maxZoom: 10, animate: animate && !reduceMotion });
+}
+function highlightTown(loc, pan) {
+  if (!map) return;
+  if (activeTown && markers.get(activeTown)) markers.get(activeTown).setStyle(MARK).setRadius(MARK.radius);
+  activeTown = loc;
+  const m = loc && markers.get(loc);
+  if (!m) return;
+  m.setStyle(MARK_ON).setRadius(MARK_ON.radius).bringToFront();
+  if (!pan) return;
+  const ll = m.getLatLng();
+  if (map.getZoom() >= 7 && map.getBounds().pad(-0.15).contains(ll)) return; // already in view, don't make it lurch
+  reduceMotion ? map.setView(ll, 9) : map.flyTo(ll, 9, { duration: 0.9 });
+}
+
+renderList();
+ensureMap();
+if (order.length) select(order[0], { pan: false });
 
 // ---------- hide text while turning (inside a pano) ----------
 let quietOn = false, quietTimer;
@@ -229,19 +376,19 @@ backBtn.addEventListener('click', () => leave());
 // ---------- caption shown while inside a pano ----------
 function showCaption(i) {
   const it = items[i];
-  $('idx').textContent = pad(i + 1);
+  $('idx').textContent = pad(order.indexOf(i) + 1); // position in the list as currently sorted
   $('title').textContent = it.location || '';
   fillMeta($('meta'), it);
 }
 
 // ---------- step inside: morph the clicked thumb into the full sphere ----------
-async function enter(i) {
+async function enter(i, sourceImg = detailImg) {
   if (mode !== 'browse') return;
   const it = items[i];
   if (!it) return;
   mode = 'entering'; active = i;
 
-  const thumbEl = entriesEl.querySelector(`.entry[data-i="${i}"] img`) || detailImg;
+  const thumbEl = sourceImg.getBoundingClientRect().width ? sourceImg : rows[i].querySelector('img');
   const r = thumbEl.getBoundingClientRect();
   const flyer = document.createElement('img');
   flyer.src = thumbEl.currentSrc || thumbEl.src;
@@ -283,6 +430,7 @@ async function leave() {
   viewerEl.hidden = true;
   compassWrap.hidden = true; $('viewerControls').hidden = true; $('browseControls').hidden = false;
   browseEl.hidden = false; browseEl.style.opacity = '0';
+  ensureMap(); map && map.invalidateSize();
   await tween(D(350), t => { browseEl.style.opacity = String(t); });
   browseEl.style.opacity = '';
   mode = 'browse';

@@ -14,6 +14,7 @@ let errors = 0;
 (data.panoramas || []).forEach((p, i) => {
   for (const key of ['location', 'file']) if (!p[key]) { console.error(`panoramas[${i}] is missing "${key}"`); errors++; }
   for (const key of ['file', 'thumb']) if (p[key] && !fs.existsSync(p[key])) { console.error(`panoramas[${i}] ${key} not found: ${p[key]}`); errors++; }
+  if (p.location && !(data.towns || {})[p.location]) { console.error(`"${p.location}" has no map pin: add it to "towns" as [lat, lng] of the town center`); errors++; }
 });
 
 if (errors) { console.error(`${errors} problem(s). Fix gallery.json before deploying.`); process.exit(1); }
