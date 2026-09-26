@@ -217,6 +217,8 @@ addEventListener('keydown', e => {
 });
 
 // ---------- map (Leaflet; town centers only, never flight GPS) ----------
+// CARTO basemap key (free tier). Public by design: it ships in the page, so restrict it to mulvey.world at dashboard.basemaps.carto.com
+const CARTO_KEY = 'cb1_3zpy_1_da3421da4fbdb6f2bebd3acc';
 let map = null;
 const markers = new Map(); // location -> circle marker
 let activeTown = null;
@@ -226,8 +228,8 @@ const MARK_ON = { radius: 9, color: '#1b1a17', weight: 1.5, fillColor: '#e2522b'
 function ensureMap() { // built lazily: Leaflet can't size itself inside a hidden pane (phones)
   if (map || !window.L || !mapEl.offsetWidth) return;
   map = L.map(mapEl, { zoomSnap: 0.5, attributionControl: true });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    subdomains: 'abcd', maxZoom: 18,
+  L.tileLayer(`https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`, {
+    maxZoom: 18,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
   }).addTo(map);
   for (const loc of new Set(items.map(it => it.location))) {
