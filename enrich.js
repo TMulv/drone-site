@@ -1,4 +1,4 @@
-// Run: node enrich.js            (looks for your SD card copy automatically)
+// Run: node enrich.js            (looks in ~/Documents/Drone/DCIM, then a plugged-in SD card)
 //  or: node enrich.js /path/to/DCIM
 // Fills gallery.json with weather, sun, place, and flight/camera info for every 360.
 // Safe to re-run any time. Never writes GPS coordinates from the drone into the site.
@@ -133,6 +133,7 @@ function summarizeSet(set) {
   const shutter = x => x >= 1 ? `${+x.toFixed(1)}` : `1/${Math.round(1 / x)}`;
   const msl = nums('AbsoluteAltitude');
   return {
+    dir: set.dir,
     start: times[0], // wall-clock seconds, as the drone recorded it
     flight: {
       frames: shots.length,
@@ -150,9 +151,11 @@ function summarizeSet(set) {
 // ---------- main ----------
 (async () => {
   const arg = process.argv[2];
+  const home = os.homedir();
   const candidates = arg ? [arg] : [
-    path.join(os.homedir(), 'Downloads', 'DCIM 2'), path.join(os.homedir(), 'Downloads', 'DCIM'),
-    ...(fs.existsSync('/Volumes') ? fs.readdirSync('/Volumes').map(v => path.join('/Volumes', v, 'DCIM')) : []),
+    path.join(home, 'Documents', 'Drone', 'DCIM'), path.join(home, 'Drone', 'DCIM'),               // where it lives now
+    ...(fs.existsSync('/Volumes') ? fs.readdirSync('/Volumes').map(v => path.join('/Volumes', v, 'DCIM')) : []), // SD card plugged in
+    path.join(home, 'Downloads', 'DCIM 2'), path.join(home, 'Downloads', 'DCIM'),                // old spots
   ];
   const sdRoot = candidates.find(c => fs.existsSync(c));
   let sets = [];
@@ -160,7 +163,7 @@ function summarizeSet(set) {
     console.log(`Reading drone photos in ${sdRoot} ...`);
     sets = findSets(sdRoot).map(summarizeSet).filter(Boolean);
     console.log(`  found ${sets.length} photo sets`);
-  } else console.log('No SD card folder found, skipping camera/flight info. Pass the path: node enrich.js /path/to/DCIM');
+  } else console.log('No drone photo folder found, so flight info already in gallery.json is left as is. To read new photos: node enrich.js /path/to/DCIM');
 
   // place: county + town elevation
   for (const [loc, t] of Object.entries(towns)) {
@@ -169,11 +172,11 @@ function summarizeSet(set) {
     towns[loc] = place;
   }
 
-  const cache = new Map();
+  const cache = new Map(), used = new Set();
   const rows = [];
   for (const p of data.panoramas) {
     const w = wallClock(p), place = towns[p.location], ll = llOf(place);
-    const row = { name: path.basename(p.file), weather: '-', sun: '-', flight: '-' };
+    const row = { name: path.basename(p.file), weather: '-', sun: '-', flight: p.flight ? 'saved earlier' : '-' };
     rows.push(row);
     if (!w || !ll) { row.weather = 'no date or map pin'; continue; }
 
@@ -210,8 +213,10 @@ function summarizeSet(set) {
     // flight: the photo set that started within 10 min of this pano's time
     if (sets.length) {
       const target = Date.UTC(w.y, w.mo, w.d, w.h, w.mi) / 1000;
-      const best = sets.map(s => ({ s, gap: Math.abs(s.start - target) })).filter(x => x.gap <= 600 && x.s.flight.frames >= 5).sort((a, b) => a.gap - b.gap)[0];
-      if (best) { p.flight = best.s.flight; row.flight = `ok (${best.s.flight.frames} frames)`; }
+      const near = sets.map(s => ({ s, gap: Math.abs(s.start - target) })).filter(x => x.gap <= 600 && x.s.flight.frames >= 5);
+      const full = near.filter(x => x.s.flight.frames >= 20); // a full sphere is 26 shots; prefer it over a wide or 180 set shot nearby
+      const best = (full.length ? full : near).sort((a, b) => a.gap - b.gap)[0];
+      if (best) { p.flight = best.s.flight; used.add(best.s.dir); row.flight = `ok (${best.s.flight.frames} frames)`; }
       else row.flight = p.flight ? 'kept existing' : 'no matching photo set';
     }
   }
@@ -219,4 +224,19 @@ function summarizeSet(set) {
   fs.writeFileSync(GALLERY, JSON.stringify(data, null, 2).replace(/\[\s+(-?[\d.]+),\s+(-?[\d.]+)\s+\]/g, '[$1, $2]') + '\n');
   console.table(rows);
   console.log('Saved gallery.json. Run node validate.js, then commit and push.');
+
+  // which raw photo folders the site no longer needs
+  if (sets.length) {
+    const rel = d => path.relative(sdRoot, d) || '.';
+    const done = sets.filter(s => used.has(s.dir)), rest = sets.filter(s => !used.has(s.dir));
+    const size = ds => ds.reduce((t, s) => t + fs.readdirSync(s.dir).reduce((a, f) => { try { return a + fs.statSync(path.join(s.dir, f)).size; } catch { return a; } }, 0), 0);
+    const gb = b => b > 1e9 ? `${(b / 1e9).toFixed(1)} GB` : `${Math.round(b / 1e6)} MB`;
+    console.log(`\nAlready on the site, info saved (${gb(size(done))}). Safe to archive or delete:`);
+    done.forEach(s => console.log(`  ${rel(s.dir)}`));
+    if (rest.length) {
+      console.log(`\nNot on the site (${gb(size(rest))}). New sets to stitch, or extras like wide/180 shots:`);
+      rest.forEach(s => console.log(`  ${rel(s.dir)}  (${s.flight.frames} frames)`));
+    }
+    console.log('\nThe flight info stays in gallery.json after the raw photos are gone; re-running this script keeps it.');
+  }
 })();

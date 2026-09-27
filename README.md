@@ -14,22 +14,38 @@ Everything else (locations, dates, buttons, hints) uses **Lemon Milk** by MARSNE
 
 The search box (top right while browsing) matches whatever's typed against each entry's town, state — full name or abbreviation — year, or season, all pulled from `location` and `date` in `gallery.json`. No extra fields needed. Non-matches drop out of the list; the detail pane jumps to the first match, or explains when there isn't one.
 
+## Where things live
+
+```
+~/Documents/Drone/
+  drone-site/   this website (the git repo)
+  DCIM/         raw photos copied off the SD card
+```
+
 ## Weather, light, flight, place
 
-The panel beside each photo is filled in by `enrich.js`, which writes it into `gallery.json`:
+The panel beside each photo is filled in by `enrich.js`, which writes it into `gallery.json`. From inside `drone-site`:
 
 ```
 node enrich.js
 ```
 
-It finds your SD card copy on its own (`~/Downloads/DCIM 2`, `~/Downloads/DCIM`, or a card in `/Volumes`), or you can point it somewhere: `node enrich.js /path/to/DCIM`.
+It reads raw photos from `~/Documents/Drone/DCIM`, or straight off the SD card if it's plugged in. Somewhere else? `node enrich.js "/path/to/DCIM"`.
 
 - **weather**: historical conditions for that town and hour, from Open-Meteo (free, no key)
 - **light**: golden hour, minutes to sunset, where the sun sat, calculated from date, time, and place
-- **flight**: frames, how long the sphere took, height above sea level, shutter, ISO, gimbal range, read from the original DJI photos (matched to each 360 by start time, within 10 minutes)
+- **flight**: frames, how long the sphere took, height above sea level, shutter, ISO, gimbal range, read from the raw DJI photos (matched to each 360 by start time, preferring full 26-frame spheres)
 - **place**: county (looked up once per new town) and town elevation
 
-Safe to re-run whenever you add 360s. It never copies the drone's GPS into the site. A group with nothing to show just doesn't appear.
+Safe to re-run any time. It never copies the drone's GPS into the site. A group with nothing to show just doesn't appear.
+
+## Saving space
+
+The raw photos are only needed twice: to stitch a 360, and for `enrich.js` to read its flight info. After that, everything the site needs is in `media/360/` and `gallery.json`.
+
+At the end of every run, `enrich.js` lists the `DCIM` folders that are **already on the site** (with how much space they take) and the ones that **aren't** (new sets still to stitch, or extras like wide and 180 shots). The first list is safe to delete or move to Google Drive / an external drive. Re-running the script later keeps the flight info it already saved.
+
+Keep a set if you think you'll ever want to re-stitch it at better quality. Once it's deleted, the stitched JPG on the site is the best copy left.
 
 ## Map
 
@@ -49,8 +65,8 @@ Open http://localhost:8000. Double-clicking `index.html` won't work because brow
 
 ## Add a 360
 
-1. Put the stitched 2:1 panorama in `media/360/`.
-2. Put a portrait card image (600x800, a slice of the pano around the horizon) in `media/360/thumbs/`. It's what shows in the list and detail pane, and it should show the middle of the pano, because that's the direction you land facing when you step inside.
+1. Copy the new `PANORAMA` folders from the SD card into `~/Documents/Drone/DCIM/PANORAMA/` (or leave the card plugged in).
+2. Stitch them: easiest is to hand the folders to Claude and ask for the new sets to be stitched and added. By hand, the stitched 2:1 panorama goes in `media/360/`, and a 600x800 portrait card cut from the middle of the pano (the direction you land facing) goes in `media/360/thumbs/`.
 3. Add an entry at the top of `panoramas` in `gallery.json`:
 
 ```json
@@ -58,16 +74,21 @@ Open http://localhost:8000. Double-clicking `index.html` won't work because brow
   "location": "Town, ST", "date": "Oct 1, 2026", "time": "6:12 pm", "alt": "40 m" }
 ```
 
-4. New town? Add it to `towns` at the top of `gallery.json` with the town center's coordinates (right-click the town on Google Maps to copy them). That's what places the map pin. Only town centers go here, never the drone's GPS:
+4. New town? Add it to `towns` at the top of `gallery.json` with the town center's coordinates (right-click the town on Google Maps to copy them). That places the map pin. Only town centers go here, never the drone's GPS:
 
 ```json
 "Town, ST": { "ll": [41.0098, -74.1729] }
 ```
 
-5. Run `node enrich.js` to fill in weather, light, flight, and place.
-6. Run `node validate.js` to catch typos and missing files.
+5. From inside `drone-site`, fill in the details, check for typos, and publish:
 
-Simplest option: drop the SD card folder into a chat with Claude and ask for the new sets to be stitched and added.
+```
+node enrich.js
+node validate.js
+git add -A && git commit -m "add new 360s" && git push
+```
+
+6. Clear out the raw folders `enrich.js` listed as already on the site (see Saving space).
 
 Got a round "little planet" from DJI Fly instead of a flat 2:1 image? `python3 unplanet.py planet.jpg media/360/new-shot.jpg` converts it (needs `pip3 install numpy pillow scipy`).
 

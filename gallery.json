@@ -448,8 +448,8 @@
         "mins_since_sunrise": 831
       },
       "flight": {
-        "frames": 8,
-        "duration_s": 14,
+        "frames": 26,
+        "duration_s": 52,
         "shutter": [
           "1/10",
           "1/8"
@@ -457,7 +457,7 @@
         "iso": [400, 800],
         "f": 2.8,
         "focal35": 24,
-        "msl_m": 49,
+        "msl_m": 52,
         "gimbal": [-90, 15]
       }
     },
