@@ -140,16 +140,23 @@ body.inside .pill[aria-pressed="true"] { background: #fff; color: var(--ink); bo
   display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto minmax(240px, 1fr);
   column-gap: 28px; row-gap: 24px;
 }
+/* the photo is a porthole: dark rim, a hairline ring outside it, curved glass on top */
 .photo {
-  all: unset; position: relative; display: block; cursor: zoom-in; border-radius: 4px; overflow: hidden;
-  height: min(40vh, 380px); aspect-ratio: 3 / 4; background: var(--paper-2);
+  all: unset; position: relative; display: block; cursor: zoom-in; border-radius: 50%; overflow: hidden;
+  height: min(40vh, 360px); aspect-ratio: 1; background: var(--ink);
+  outline: 1px solid rgba(27, 26, 23, .3); outline-offset: 9px;
+}
+.photo::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; z-index: 1;
+  box-shadow: inset 0 0 0 7px var(--ink), inset 0 0 50px rgba(0, 0, 0, .55);
+  background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, .28), transparent 38%);
 }
 .photo[hidden] { display: none; }
 .photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s cubic-bezier(.22, .68, 0, 1); }
 .photo:hover img, .photo:focus-visible img { transform: scale(1.04); }
-.photo:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+.photo:focus-visible { outline: 2px solid var(--signal); outline-offset: 9px; }
 .photoHint {
-  position: absolute; left: 50%; bottom: 16px; transform: translate(-50%, 6px); padding: 7px 14px; border-radius: 999px;
+  position: absolute; left: 50%; bottom: 22%; z-index: 2; transform: translate(-50%, 6px); padding: 7px 14px; border-radius: 999px;
   background: rgba(27, 26, 23, .72); color: var(--paper); font-size: 12px; white-space: nowrap;
   opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none;
 }
@@ -286,7 +293,7 @@ body.quiet .mark, body.quiet .compass, body.quiet #caption { opacity: 0; }
 /* mid-size screens: stack photo, text, and map in the right pane */
 @media (min-width: 781px) and (max-width: 1100px) {
   .detail { grid-template-columns: 1fr; grid-template-rows: auto auto minmax(240px, 1fr); }
-  .photo { height: min(34vh, 320px); }
+  .photo { height: min(34vh, 300px); }
   .detailText { align-self: start; }
   .facts { margin-top: 0; }
 }

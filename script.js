@@ -503,10 +503,12 @@ async function enter(i, sourceImg = detailImg) {
   mode = 'entering'; active = i;
 
   const thumbEl = sourceImg.getBoundingClientRect().width ? sourceImg : rows[i].querySelector('img');
-  const r = thumbEl.getBoundingClientRect();
+  const round = thumbEl === detailImg;
+  const r = (round ? detailPhoto : thumbEl).getBoundingClientRect();
   const flyer = document.createElement('img');
   flyer.src = thumbEl.currentSrc || thumbEl.src;
   flyer.className = 'flyer';
+  if (round) flyer.style.borderRadius = '50%'; // round from the first frame, not after the fade
   Object.assign(flyer.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
   document.body.appendChild(flyer);
 
@@ -517,7 +519,13 @@ async function enter(i, sourceImg = detailImg) {
   browseEl.hidden = true; browseEl.style.opacity = '';
   $('browseControls').hidden = true;
 
-  requestAnimationFrame(() => flyer.classList.add('full'));
+  if (round) { // through the porthole: the circle swells past the screen edges, like flying through the window
+    const d = Math.hypot(innerWidth, innerHeight);
+    Object.assign(flyer.style, { transitionDuration: '.9s', transitionTimingFunction: 'cubic-bezier(.55, 0, .25, 1)' });
+    requestAnimationFrame(() => requestAnimationFrame(() => Object.assign(flyer.style, {
+      left: `${(innerWidth - d) / 2}px`, top: `${(innerHeight - d) / 2}px`, width: `${d}px`, height: `${d}px`,
+    })));
+  } else requestAnimationFrame(() => flyer.classList.add('full'));
   await (reduceMotion ? Promise.resolve() : new Promise(res => flyer.addEventListener('transitionend', res, { once: true })));
 
   if (texReady) applyTex(await texReady, i);
