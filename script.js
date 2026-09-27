@@ -59,7 +59,7 @@ const browseEl = $('browse'), viewerEl = $('viewer'), entriesEl = $('entries');
 const detailPhoto = $('detailPhoto'), detailImg = $('detailImg'), detailTitle = $('detailTitle'), detailMeta = $('detailMeta');
 const searchBox = $('search'), searchClear = $('searchClear'), searchCount = $('searchCount');
 const compassWrap = $('compassWrap'), backBtn = $('back'), hintEl = $('hint');
-const mapEl = $('map'), sortDirBtn = $('sortDir');
+const mapEl = $('map'), sortDirBtn = $('sortDir'), factsEl = $('detailFacts');
 const phoneLayout = matchMedia('(max-width: 780px)'); // no detail pane there: tapping a row steps straight in
 
 function metaLine(it) {
@@ -82,7 +82,8 @@ function parseWhen(it) {
 // ---------- load the gallery ----------
 const data = await fetch('gallery.json').then(r => r.json());
 items = data.panoramas || [];
-const towns = data.towns || {}; // "Town, ST" -> [lat, lng] of the town center, for the map
+const towns = data.towns || {}; // "Town, ST" -> { ll: [lat, lng] of the town center, county, elev_ft }
+const townLL = loc => { const t = towns[loc]; return Array.isArray(t) ? t : t && t.ll; };
 items.forEach(it => {
   const [town = '', st = ''] = (it.location || '').split(',').map(s => s.trim());
   it._town = town;
@@ -178,6 +179,67 @@ searchBox.addEventListener('input', e => applySearch(e.target.value));
 searchClear.addEventListener('click', () => { searchBox.value = ''; applySearch(''); searchBox.focus(); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && document.activeElement === searchBox && searchBox.value) { searchBox.value = ''; applySearch(''); } });
 
+
+// ---------- conditions next to the photo (filled in by enrich.js) ----------
+const WMO = { 0: 'clear', 1: 'mostly clear', 2: 'partly cloudy', 3: 'overcast', 45: 'fog', 48: 'freezing fog',
+  51: 'light drizzle', 53: 'drizzle', 55: 'heavy drizzle', 56: 'freezing drizzle', 57: 'freezing drizzle',
+  61: 'light rain', 63: 'rain', 65: 'heavy rain', 66: 'freezing rain', 67: 'freezing rain',
+  71: 'light snow', 73: 'snow', 75: 'heavy snow', 77: 'snow grains', 80: 'light showers', 81: 'showers', 82: 'heavy showers',
+  85: 'snow showers', 86: 'snow showers', 95: 'thunderstorms', 96: 'thunderstorms with hail', 99: 'thunderstorms with hail' };
+const COMPASS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
+const toCompass = deg => COMPASS[Math.round(((deg % 360) + 360) % 360 / 45) % 8];
+const num = n => Number(n).toLocaleString('en-US');
+const mins = n => n < 60 ? `${n} min` : `${Math.floor(n / 60)} hr ${n % 60 ? `${n % 60} min` : ''}`.trim();
+
+function weatherLines(w) {
+  if (!w) return [];
+  return [
+    [w.temp_f != null && `${w.temp_f}°f`, WMO[w.code]].filter(Boolean).join(', '),
+    w.wind_mph != null && (w.wind_mph < 2 ? 'calm' : `wind ${w.wind_mph} mph from the ${toCompass(w.wind_dir)}${w.gust_mph > w.wind_mph + 4 ? `, gusts ${w.gust_mph}` : ''}`),
+    [w.humidity != null && `${w.humidity}% humidity`, w.visibility_mi != null && `${w.visibility_mi} mi visibility`].filter(Boolean).join(', '),
+  ];
+}
+function sunLines(s) {
+  if (!s) return [];
+  const phase = s.alt < -6 ? 'after dark' : s.alt < -4 ? 'blue hour' : s.alt < 6 ? 'golden hour' : s.alt < 20 ? 'low sun' : 'high sun';
+  const toSet = s.mins_to_sunset, sinceRise = s.mins_since_sunrise;
+  const timing = toSet != null && toSet >= 0 && toSet <= 120 ? `${mins(toSet)} before sunset`
+    : toSet != null && toSet < 0 && toSet >= -90 ? `${mins(-toSet)} after sunset`
+    : sinceRise != null && sinceRise >= 0 && sinceRise <= 120 ? `${mins(sinceRise)} after sunrise`
+    : sinceRise != null && sinceRise < 0 && sinceRise >= -90 ? `${mins(-sinceRise)} before sunrise`
+    : s.sunset && `sunset at ${s.sunset}`;
+  const where = s.alt >= 0 ? `sun ${Math.round(s.alt)}° up in the ${toCompass(s.az)}` : `sun ${Math.round(-s.alt)}° below the horizon`;
+  return [phase, timing, where];
+}
+function flightLines(f) {
+  if (!f) return [];
+  const range = (a, unit = '') => a && (a[0] === a[1] ? `${a[0]}${unit}` : `${a[0]} to ${a[1]}${unit}`);
+  return [
+    [f.frames && `${f.frames} frames`, f.duration_s && `shot in ${f.duration_s < 60 ? `${f.duration_s} s` : `${Math.floor(f.duration_s / 60)} min ${f.duration_s % 60} s`}`].filter(Boolean).join(', '),
+    f.msl_m != null && `${num(Math.round(f.msl_m * 3.28084))} ft above sea level`,
+    [f.shutter && range(f.shutter, ' s'), f.iso && `iso ${range(f.iso)}`, f.f && `f/${f.f}`].filter(Boolean).join(', '),
+    f.gimbal && `gimbal ${f.gimbal[0]}° to ${f.gimbal[1]}°`,
+  ];
+}
+function placeLines(it) {
+  const t = towns[it.location] || {};
+  return [
+    [t.county, it._state].filter(Boolean).join(', '),
+    t.elev_ft != null && `town elevation ${num(t.elev_ft)} ft`,
+  ];
+}
+function renderFacts(it) {
+  const groups = [['weather', weatherLines(it.weather)], ['light', sunLines(it.sun)], ['flight', flightLines(it.flight)], ['place', placeLines(it)]];
+  factsEl.replaceChildren(...groups.map(([name, lines]) => {
+    lines = lines.filter(Boolean);
+    if (!lines.length) return null;
+    const g = document.createElement('div'); g.className = 'fact';
+    g.append(Object.assign(document.createElement('h3'), { textContent: name }));
+    for (const l of lines) g.append(Object.assign(document.createElement('p'), { textContent: l }));
+    return g;
+  }).filter(Boolean));
+}
+
 // ---------- the right pane ----------
 function select(i, { pan = true, scroll = false } = {}) {
   const it = items[i];
@@ -191,6 +253,7 @@ function select(i, { pan = true, scroll = false } = {}) {
   detailImg.src = it.thumb || it.file; detailImg.alt = it.location || '';
   detailTitle.textContent = it.location || '';
   fillMeta(detailMeta, it);
+  renderFacts(it);
   highlightTown(it.location, pan);
 }
 function showEmpty(query) {
@@ -199,6 +262,7 @@ function showEmpty(query) {
   detailPhoto.hidden = true; detailImg.removeAttribute('src');
   detailTitle.textContent = 'nothing here';
   detailMeta.replaceChildren(Object.assign(document.createElement('span'), { textContent: `no town, state, year, or season matches "${query}"` }));
+  factsEl.replaceChildren();
   highlightTown(null, false);
 }
 detailPhoto.addEventListener('click', () => { if (sel >= 0) enter(sel, detailImg); });
@@ -233,13 +297,10 @@ function ensureMap() { // built lazily: Leaflet can't size itself inside a hidde
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
   }).addTo(map);
   for (const loc of new Set(items.map(it => it.location))) {
-    const ll = towns[loc];
+    const ll = townLL(loc);
     if (!ll) continue;
     const m = L.circleMarker(ll, MARK).addTo(map);
-    m.on('click', () => {
-      const i = order.find(j => items[j].location === loc && visible(j));
-      if (i !== undefined) select(i, { scroll: true });
-    });
+    m.on('click', () => openTown(loc, m));
     markers.set(loc, m);
   }
   updateMarkers();
@@ -247,6 +308,32 @@ function ensureMap() { // built lazily: Leaflet can't size itself inside a hidde
   if (sel >= 0) highlightTown(items[sel].location, false);
 }
 addEventListener('resize', () => { ensureMap(); map && map.invalidateSize(); });
+
+// clicking a pin lists every 360 from that town; pick one to show it on the right
+function openTown(loc, m) {
+  const here = order.filter(j => items[j].location === loc && visible(j));
+  if (!here.length) return;
+  if (sel < 0 || items[sel].location !== loc) select(here[0], { scroll: true, pan: false });
+  if (here.length === 1) return;
+  const box = document.createElement('div'); box.className = 'townPop';
+  box.append(Object.assign(document.createElement('strong'), { textContent: `${loc} · ${here.length} 360s` }));
+  const grid = document.createElement('div'); grid.className = 'townGrid';
+  for (const j of here) {
+    const it = items[j];
+    const b = document.createElement('button'); b.type = 'button';
+    if (j === sel) b.setAttribute('aria-current', 'true');
+    const img = Object.assign(document.createElement('img'), { src: it.thumb || it.file, alt: '' });
+    const cap = Object.assign(document.createElement('span'), { textContent: `${(it.date || '').replace(/,\s*\d{4}$/, '')}, ${it.time || ''}` });
+    b.append(img, cap);
+    b.addEventListener('click', () => {
+      select(j, { scroll: true, pan: false });
+      grid.querySelectorAll('button').forEach(x => x.toggleAttribute('aria-current', x === b));
+    });
+    grid.append(b);
+  }
+  box.append(grid);
+  m.unbindPopup().bindPopup(box, { className: 'townPopup', closeButton: false, offset: [0, -4], maxWidth: 320, autoPanPadding: [20, 20] }).openPopup();
+}
 
 function updateMarkers() { // hide towns a search filtered out; tooltip counts what's left
   if (!map) return;
@@ -259,7 +346,7 @@ function updateMarkers() { // hide towns a search filtered out; tooltip counts w
 }
 function fitMap(animate = true) {
   if (!map) return;
-  const pts = [...markers].filter(([, m]) => map.hasLayer(m)).map(([loc]) => towns[loc]);
+  const pts = [...markers].filter(([, m]) => map.hasLayer(m)).map(([loc]) => townLL(loc));
   if (!pts.length) return;
   if (pts.length === 1) map.setView(pts[0], 10, { animate: animate && !reduceMotion });
   else map.fitBounds(pts, { padding: [36, 36], maxZoom: 10, animate: animate && !reduceMotion });

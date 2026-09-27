@@ -21,6 +21,7 @@
   font-display: swap;
 }
 * { box-sizing: border-box; margin: 0; }
+[hidden] { display: none !important; } /* hidden always wins, even over display:flex rules */
 html, body { height: 100%; overflow: hidden; }
 body {
   background: radial-gradient(120% 90% at 50% 45%, var(--paper) 40%, var(--paper-2) 100%);
@@ -155,7 +156,14 @@ body.inside .pill[aria-pressed="true"] { background: #fff; color: var(--ink); bo
 .photo:hover .photoHint, .photo:focus-visible .photoHint { opacity: 1; transform: translate(-50%, 0); }
 @media (hover: none) { .photoHint { opacity: 1; transform: translate(-50%, 0); } }
 
-.detailText { align-self: end; min-width: 0; padding-bottom: 6px; }
+.detailText { align-self: stretch; min-width: 0; display: flex; flex-direction: column; }
+.facts {
+  margin-top: auto; padding-top: 22px; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  column-gap: 24px; row-gap: 18px;
+}
+.fact { border-top: 1px solid rgba(27, 26, 23, .18); padding-top: 9px; }
+.fact h3 { font: 300 11px/1 var(--sans); letter-spacing: .08em; color: var(--signal); margin-bottom: 8px; }
+.fact p { font-size: 12.5px; line-height: 1.45; }
 .detail h2 { font: 400 clamp(24px, 3.2vw, 44px)/1.05 var(--display); letter-spacing: .02em; text-transform: uppercase; overflow-wrap: anywhere; }
 .detail .meta { margin-top: 14px; color: var(--ink); opacity: .75; display: flex; flex-wrap: wrap; row-gap: 4px; }
 .detail .meta span { white-space: nowrap; }
@@ -165,7 +173,7 @@ body.inside .pill[aria-pressed="true"] { background: #fff; color: var(--ink); bo
   grid-column: 1 / -1; border-radius: 4px; border: 1px solid rgba(27, 26, 23, .14); overflow: hidden;
   background: var(--paper-2);
 }
-.map .leaflet-tile-pane { filter: sepia(.28) saturate(.75) brightness(1.02); } /* warm the gray basemap toward the site's paper */
+.map .leaflet-tile-pane { filter: sepia(.15) saturate(.9) contrast(1.08); } /* warm the gray basemap toward the site's paper */
 .leaflet-container { font: inherit; font-size: 12px; }
 .map .leaflet-control-attribution { background: rgba(239, 235, 228, .85); color: var(--muted); font-size: 10px; text-transform: none; letter-spacing: 0; }
 .map .leaflet-control-attribution a { color: inherit; }
@@ -176,6 +184,22 @@ body.inside .pill[aria-pressed="true"] { background: #fff; color: var(--ink); bo
   box-shadow: none; font-size: 12px; letter-spacing: .04em;
 }
 .map .leaflet-tooltip-top::before { border-top-color: var(--ink); }
+.map .leaflet-interactive:focus { outline: none; }
+
+/* pin popup: every 360 from that town */
+.townPopup .leaflet-popup-content-wrapper { background: var(--paper); color: var(--ink); border-radius: 6px; box-shadow: 0 8px 28px rgba(27, 26, 23, .22); }
+.townPopup .leaflet-popup-tip { background: var(--paper); }
+.townPopup .leaflet-popup-content { margin: 12px; font: inherit; font-size: 12px; }
+.townPop strong { display: block; font-weight: 300; margin-bottom: 10px; }
+.townGrid { display: grid; grid-template-columns: repeat(auto-fill, 72px); gap: 10px; max-width: 290px; }
+.townGrid button {
+  all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 5px;
+  font-size: 10px; line-height: 1.25; color: var(--muted); text-align: center;
+}
+.townGrid img { width: 72px; height: 96px; object-fit: cover; border-radius: 3px; outline: 2px solid transparent; outline-offset: 2px; transition: outline-color .2s; }
+.townGrid button:hover img, .townGrid button:focus-visible img { outline-color: rgba(27, 26, 23, .35); }
+.townGrid button[aria-current="true"] img { outline-color: var(--signal); }
+.townGrid button[aria-current="true"] { color: var(--ink); }
 
 /* ---------- the shared-element flyer that morphs a thumb into the full pano ---------- */
 .flyer {
@@ -256,4 +280,5 @@ body.quiet .mark, body.quiet .compass, body.quiet #caption { opacity: 0; }
   .detail { grid-template-columns: 1fr; grid-template-rows: auto auto minmax(240px, 1fr); }
   .photo { height: min(34vh, 320px); }
   .detailText { align-self: start; }
+  .facts { margin-top: 0; }
 }

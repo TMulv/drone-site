@@ -14,9 +14,26 @@ Everything else (locations, dates, buttons, hints) uses **Lemon Milk** by MARSNE
 
 The search box (top right while browsing) matches whatever's typed against each entry's town, state — full name or abbreviation — year, or season, all pulled from `location` and `date` in `gallery.json`. No extra fields needed. Non-matches drop out of the list; the detail pane jumps to the first match, or explains when there isn't one.
 
+## Weather, light, flight, place
+
+The panel beside each photo is filled in by `enrich.js`, which writes it into `gallery.json`:
+
+```
+node enrich.js
+```
+
+It finds your SD card copy on its own (`~/Downloads/DCIM 2`, `~/Downloads/DCIM`, or a card in `/Volumes`), or you can point it somewhere: `node enrich.js /path/to/DCIM`.
+
+- **weather**: historical conditions for that town and hour, from Open-Meteo (free, no key)
+- **light**: golden hour, minutes to sunset, where the sun sat, calculated from date, time, and place
+- **flight**: frames, how long the sphere took, height above sea level, shutter, ISO, gimbal range, read from the original DJI photos (matched to each 360 by start time, within 10 minutes)
+- **place**: county (looked up once per new town) and town elevation
+
+Safe to re-run whenever you add 360s. It never copies the drone's GPS into the site. A group with nothing to show just doesn't appear.
+
 ## Map
 
-Leaflet (loaded from cdnjs) with CARTO's light basemap, tinted warm in `style.css`. Pins sit on town centers from `towns` in `gallery.json`. Clicking a pin selects that town's first 360 in the list; searching hides pins with no matches.
+Leaflet (loaded from cdnjs) with CARTO's light basemap, tinted warm in `style.css`. CARTO needs a free API key (carto.com/basemaps/apikey); it's `CARTO_KEY` near the map code in `script.js`. Keys are visible in the page by nature, so restrict yours to mulvey.world in the CARTO dashboard. Pins sit on town centers from `towns` in `gallery.json`. Clicking a pin selects that town's first 360 in the list; searching hides pins with no matches.
 
 ## Controls
 
@@ -44,10 +61,11 @@ Open http://localhost:8000. Double-clicking `index.html` won't work because brow
 4. New town? Add it to `towns` at the top of `gallery.json` with the town center's coordinates (right-click the town on Google Maps to copy them). That's what places the map pin. Only town centers go here, never the drone's GPS:
 
 ```json
-"Town, ST": [41.0098, -74.1729]
+"Town, ST": { "ll": [41.0098, -74.1729] }
 ```
 
-5. Run `node validate.js` to catch typos and missing files.
+5. Run `node enrich.js` to fill in weather, light, flight, and place.
+6. Run `node validate.js` to catch typos and missing files.
 
 Simplest option: drop the SD card folder into a chat with Claude and ask for the new sets to be stitched and added.
 

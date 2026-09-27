@@ -1,11 +1,35 @@
 {
   "towns": {
-    "Ward, CO": [40.0725, -105.5092],
-    "West Milford, NJ": [41.1312, -74.3674],
-    "Goldens Bridge, NY": [41.2937, -73.6776],
-    "Wyckoff, NJ": [41.0098, -74.1729],
-    "Hawthorne, NJ": [40.9493, -74.1537],
-    "Maggie Valley, NC": [35.5184, -83.0977]
+    "Ward, CO": {
+      "ll": [40.0725, -105.5092],
+      "county": "Boulder County",
+      "elev_ft": 9265
+    },
+    "West Milford, NJ": {
+      "ll": [41.1312, -74.3674],
+      "county": "Passaic County",
+      "elev_ft": 696
+    },
+    "Goldens Bridge, NY": {
+      "ll": [41.2937, -73.6776],
+      "county": "Westchester County",
+      "elev_ft": 220
+    },
+    "Wyckoff, NJ": {
+      "ll": [41.0098, -74.1729],
+      "county": "Bergen County",
+      "elev_ft": 358
+    },
+    "Hawthorne, NJ": {
+      "ll": [40.9493, -74.1537],
+      "county": "Passaic County",
+      "elev_ft": 89
+    },
+    "Maggie Valley, NC": {
+      "ll": [35.5184, -83.0977],
+      "county": "Haywood County",
+      "elev_ft": 3022
+    }
   },
   "panoramas": [
     {
@@ -14,7 +38,38 @@
       "location": "Ward, CO",
       "date": "Sep 19, 2026",
       "time": "4:10 pm",
-      "alt": "32 m"
+      "alt": "32 m",
+      "weather": {
+        "temp_f": 54,
+        "code": 1,
+        "cloud": 38,
+        "humidity": 51,
+        "wind_mph": 18,
+        "gust_mph": 35,
+        "wind_dir": 274,
+        "visibility_mi": 23
+      },
+      "sun": {
+        "alt": 31.5,
+        "az": 241,
+        "sunrise": "6:46 am",
+        "sunset": "7:03 pm",
+        "mins_to_sunset": 173,
+        "mins_since_sunrise": 564
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 57,
+        "shutter": [
+          "1/3200",
+          "1/1000"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 2722,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/storm-over-the-pines.jpg",
@@ -22,7 +77,38 @@
       "location": "Ward, CO",
       "date": "Sep 18, 2026",
       "time": "3:43 pm",
-      "alt": "42 m"
+      "alt": "42 m",
+      "weather": {
+        "temp_f": 61,
+        "code": 3,
+        "cloud": 100,
+        "humidity": 49,
+        "wind_mph": 10,
+        "gust_mph": 15,
+        "wind_dir": 156,
+        "visibility_mi": 23
+      },
+      "sun": {
+        "alt": 36.3,
+        "az": 235,
+        "sunrise": "6:45 am",
+        "sunset": "7:05 pm",
+        "mins_to_sunset": 202,
+        "mins_since_sunrise": 538
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 48,
+        "shutter": [
+          "1/2000",
+          "1/500"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 2710,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/rocky-mountain-sunrise.jpg",
@@ -30,7 +116,38 @@
       "location": "Ward, CO",
       "date": "Sep 18, 2026",
       "time": "6:49 am",
-      "alt": "24 m"
+      "alt": "24 m",
+      "weather": {
+        "temp_f": 48,
+        "code": 3,
+        "cloud": 98,
+        "humidity": 63,
+        "wind_mph": 11,
+        "gust_mph": 32,
+        "wind_dir": 271,
+        "visibility_mi": 17
+      },
+      "sun": {
+        "alt": -0.2,
+        "az": 87,
+        "sunrise": "6:45 am",
+        "sunset": "7:05 pm",
+        "mins_to_sunset": 736,
+        "mins_since_sunrise": 4
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/100",
+          "1/30"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 2675,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/wooded-driveway.jpg",
@@ -38,7 +155,38 @@
       "location": "West Milford, NJ",
       "date": "Sep 7, 2026",
       "time": "7:08 pm",
-      "alt": "7 m"
+      "alt": "7 m",
+      "weather": {
+        "temp_f": 71,
+        "code": 0,
+        "cloud": 0,
+        "humidity": 48,
+        "wind_mph": 7,
+        "gust_mph": 10,
+        "wind_dir": 276,
+        "visibility_mi": 26
+      },
+      "sun": {
+        "alt": 1.6,
+        "az": 276,
+        "sunrise": "6:30 am",
+        "sunset": "7:20 pm",
+        "mins_to_sunset": 12,
+        "mins_since_sunrise": 758
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 51,
+        "shutter": [
+          "1/13",
+          "1/8"
+        ],
+        "iso": [200, 800],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 211,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/evening-contrails.jpg",
@@ -46,7 +194,38 @@
       "location": "West Milford, NJ",
       "date": "Sep 7, 2026",
       "time": "7:01 pm",
-      "alt": "115 m"
+      "alt": "115 m",
+      "weather": {
+        "temp_f": 71,
+        "code": 0,
+        "cloud": 0,
+        "humidity": 48,
+        "wind_mph": 7,
+        "gust_mph": 10,
+        "wind_dir": 276,
+        "visibility_mi": 26
+      },
+      "sun": {
+        "alt": 2.9,
+        "az": 275,
+        "sunrise": "6:30 am",
+        "sunset": "7:20 pm",
+        "mins_to_sunset": 19,
+        "mins_since_sunrise": 751
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 47,
+        "shutter": [
+          "1/400",
+          "1/100"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 318,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/sun-over-the-forest.jpg",
@@ -54,7 +233,38 @@
       "location": "West Milford, NJ",
       "date": "Sep 7, 2026",
       "time": "4:38 pm",
-      "alt": "115 m"
+      "alt": "115 m",
+      "weather": {
+        "temp_f": 76,
+        "code": 0,
+        "cloud": 0,
+        "humidity": 43,
+        "wind_mph": 4,
+        "gust_mph": 7,
+        "wind_dir": 304,
+        "visibility_mi": 29
+      },
+      "sun": {
+        "alt": 29.5,
+        "az": 250,
+        "sunrise": "6:30 am",
+        "sunset": "7:20 pm",
+        "mins_to_sunset": 162,
+        "mins_since_sunrise": 608
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 48,
+        "shutter": [
+          "1/4000",
+          "1/1000"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 328,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/farmhouse-and-barn.jpg",
@@ -62,7 +272,38 @@
       "location": "Goldens Bridge, NY",
       "date": "Sep 5, 2026",
       "time": "3:18 pm",
-      "alt": "7 m"
+      "alt": "7 m",
+      "weather": {
+        "temp_f": 75,
+        "code": 0,
+        "cloud": 4,
+        "humidity": 66,
+        "wind_mph": 7,
+        "gust_mph": 11,
+        "wind_dir": 338,
+        "visibility_mi": 17
+      },
+      "sun": {
+        "alt": 42.9,
+        "az": 233,
+        "sunrise": "6:25 am",
+        "sunset": "7:20 pm",
+        "mins_to_sunset": 242,
+        "mins_since_sunrise": 533
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/2000",
+          "1/500"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 117,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/farmhouse.jpg",
@@ -70,7 +311,38 @@
       "location": "Goldens Bridge, NY",
       "date": "Sep 5, 2026",
       "time": "3:17 pm",
-      "alt": "7 m"
+      "alt": "7 m",
+      "weather": {
+        "temp_f": 75,
+        "code": 0,
+        "cloud": 4,
+        "humidity": 66,
+        "wind_mph": 7,
+        "gust_mph": 11,
+        "wind_dir": 338,
+        "visibility_mi": 17
+      },
+      "sun": {
+        "alt": 43.1,
+        "az": 233,
+        "sunrise": "6:25 am",
+        "sunset": "7:20 pm",
+        "mins_to_sunset": 243,
+        "mins_since_sunrise": 532
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 50,
+        "shutter": [
+          "1/500",
+          "1/120"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 117,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/rooftop-view.jpg",
@@ -78,7 +350,38 @@
       "location": "Goldens Bridge, NY",
       "date": "Sep 5, 2026",
       "time": "3:13 pm",
-      "alt": "102 m"
+      "alt": "102 m",
+      "weather": {
+        "temp_f": 75,
+        "code": 0,
+        "cloud": 4,
+        "humidity": 66,
+        "wind_mph": 7,
+        "gust_mph": 11,
+        "wind_dir": 338,
+        "visibility_mi": 17
+      },
+      "sun": {
+        "alt": 43.7,
+        "az": 232,
+        "sunrise": "6:25 am",
+        "sunset": "7:20 pm",
+        "mins_to_sunset": 247,
+        "mins_since_sunrise": 528
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 48,
+        "shutter": [
+          "1/4000",
+          "1/1000"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 213,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/fields-and-lakes.jpg",
@@ -86,7 +389,38 @@
       "location": "Goldens Bridge, NY",
       "date": "Sep 5, 2026",
       "time": "3:07 pm",
-      "alt": "76 m"
+      "alt": "76 m",
+      "weather": {
+        "temp_f": 75,
+        "code": 0,
+        "cloud": 4,
+        "humidity": 66,
+        "wind_mph": 7,
+        "gust_mph": 11,
+        "wind_dir": 338,
+        "visibility_mi": 17
+      },
+      "sun": {
+        "alt": 44.5,
+        "az": 230,
+        "sunrise": "6:25 am",
+        "sunset": "7:20 pm",
+        "mins_to_sunset": 253,
+        "mins_since_sunrise": 522
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 47,
+        "shutter": [
+          "1/3200",
+          "1/1250"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 186,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/backyard-patio.jpg",
@@ -94,7 +428,38 @@
       "location": "Wyckoff, NJ",
       "date": "Aug 15, 2026",
       "time": "7:57 pm",
-      "alt": "5 m"
+      "alt": "5 m",
+      "weather": {
+        "temp_f": 75,
+        "code": 0,
+        "cloud": 0,
+        "humidity": 51,
+        "wind_mph": 2,
+        "gust_mph": 2,
+        "wind_dir": 240,
+        "visibility_mi": 24
+      },
+      "sun": {
+        "alt": -1,
+        "az": 290,
+        "sunrise": "6:06 am",
+        "sunset": "7:55 pm",
+        "mins_to_sunset": -2,
+        "mins_since_sunrise": 831
+      },
+      "flight": {
+        "frames": 8,
+        "duration_s": 14,
+        "shutter": [
+          "1/10",
+          "1/8"
+        ],
+        "iso": [400, 800],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 49,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/sunset-over-the-suburbs.jpg",
@@ -102,7 +467,38 @@
       "location": "Wyckoff, NJ",
       "date": "Aug 15, 2026",
       "time": "7:49 pm",
-      "alt": "93 m"
+      "alt": "93 m",
+      "weather": {
+        "temp_f": 75,
+        "code": 0,
+        "cloud": 0,
+        "humidity": 51,
+        "wind_mph": 2,
+        "gust_mph": 2,
+        "wind_dir": 240,
+        "visibility_mi": 24
+      },
+      "sun": {
+        "alt": 0.4,
+        "az": 288,
+        "sunrise": "6:06 am",
+        "sunset": "7:55 pm",
+        "mins_to_sunset": 6,
+        "mins_since_sunrise": 823
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 47,
+        "shutter": [
+          "1/200",
+          "1/50"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 142,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/street-level-sunset.jpg",
@@ -110,7 +506,38 @@
       "location": "Hawthorne, NJ",
       "date": "Aug 14, 2026",
       "time": "8:12 pm",
-      "alt": "13 m"
+      "alt": "13 m",
+      "weather": {
+        "temp_f": 78,
+        "code": 0,
+        "cloud": 4,
+        "humidity": 60,
+        "wind_mph": 5,
+        "gust_mph": 10,
+        "wind_dir": 252,
+        "visibility_mi": 19
+      },
+      "sun": {
+        "alt": -3.4,
+        "az": 292,
+        "sunrise": "6:05 am",
+        "sunset": "7:56 pm",
+        "mins_to_sunset": -16,
+        "mins_since_sunrise": 847
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 51,
+        "shutter": [
+          "1/13",
+          "1/8"
+        ],
+        "iso": [200, 400],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 15,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/neighborhood-sunset.jpg",
@@ -118,7 +545,38 @@
       "location": "Hawthorne, NJ",
       "date": "Aug 14, 2026",
       "time": "8:07 pm",
-      "alt": "29 m"
+      "alt": "29 m",
+      "weather": {
+        "temp_f": 78,
+        "code": 0,
+        "cloud": 4,
+        "humidity": 60,
+        "wind_mph": 5,
+        "gust_mph": 10,
+        "wind_dir": 252,
+        "visibility_mi": 19
+      },
+      "sun": {
+        "alt": -2.6,
+        "az": 291,
+        "sunrise": "6:05 am",
+        "sunset": "7:56 pm",
+        "mins_to_sunset": -11,
+        "mins_since_sunrise": 842
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/40",
+          "1/15"
+        ],
+        "iso": [100, 200],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 31,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/gray-day-over-the-ridge.jpg",
@@ -126,7 +584,38 @@
       "location": "West Milford, NJ",
       "date": "Aug 2, 2026",
       "time": "5:45 pm",
-      "alt": "79 m"
+      "alt": "79 m",
+      "weather": {
+        "temp_f": 77,
+        "code": 51,
+        "cloud": 100,
+        "humidity": 71,
+        "wind_mph": 10,
+        "gust_mph": 16,
+        "wind_dir": 143,
+        "visibility_mi": 15
+      },
+      "sun": {
+        "alt": 26.3,
+        "az": 271,
+        "sunrise": "5:54 am",
+        "sunset": "8:12 pm",
+        "mins_to_sunset": 147,
+        "mins_since_sunrise": 711
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 47,
+        "shutter": [
+          "1/640",
+          "1/160"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 370,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/overcast-hills.jpg",
@@ -134,7 +623,38 @@
       "location": "West Milford, NJ",
       "date": "Aug 2, 2026",
       "time": "5:34 pm",
-      "alt": "78 m"
+      "alt": "78 m",
+      "weather": {
+        "temp_f": 77,
+        "code": 51,
+        "cloud": 100,
+        "humidity": 71,
+        "wind_mph": 10,
+        "gust_mph": 16,
+        "wind_dir": 143,
+        "visibility_mi": 15
+      },
+      "sun": {
+        "alt": 28.3,
+        "az": 269,
+        "sunrise": "5:54 am",
+        "sunset": "8:12 pm",
+        "mins_to_sunset": 158,
+        "mins_since_sunrise": 700
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 47,
+        "shutter": [
+          "1/1000",
+          "1/240"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 370,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/pond-and-treetops.jpg",
@@ -142,7 +662,38 @@
       "location": "Wyckoff, NJ",
       "date": "Aug 2, 2026",
       "time": "1:51 pm",
-      "alt": "41 m"
+      "alt": "41 m",
+      "weather": {
+        "temp_f": 83,
+        "code": 3,
+        "cloud": 100,
+        "humidity": 52,
+        "wind_mph": 14,
+        "gust_mph": 18,
+        "wind_dir": 153,
+        "visibility_mi": 15
+      },
+      "sun": {
+        "alt": 64.6,
+        "az": 207,
+        "sunrise": "5:53 am",
+        "sunset": "8:11 pm",
+        "mins_to_sunset": 380,
+        "mins_since_sunrise": 478
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 47,
+        "shutter": [
+          "1/5000",
+          "1/1250"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 148,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/mountaintop-house.jpg",
@@ -150,7 +701,38 @@
       "location": "Maggie Valley, NC",
       "date": "Jul 31, 2026",
       "time": "2:33 pm",
-      "alt": "7 m"
+      "alt": "7 m",
+      "weather": {
+        "temp_f": 82,
+        "code": 0,
+        "cloud": 18,
+        "humidity": 40,
+        "wind_mph": 4,
+        "gust_mph": 3,
+        "wind_dir": 235,
+        "visibility_mi": 15
+      },
+      "sun": {
+        "alt": 69,
+        "az": 218,
+        "sunrise": "6:39 am",
+        "sunset": "8:36 pm",
+        "mins_to_sunset": 363,
+        "mins_since_sunrise": 474
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/2000",
+          "1/500"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 1265,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/above-the-ridge.jpg",
@@ -158,7 +740,38 @@
       "location": "Maggie Valley, NC",
       "date": "Jul 28, 2026",
       "time": "8:38 pm",
-      "alt": "28 m"
+      "alt": "28 m",
+      "weather": {
+        "temp_f": 70,
+        "code": 0,
+        "cloud": 6,
+        "humidity": 94,
+        "wind_mph": 5,
+        "gust_mph": 9,
+        "wind_dir": 272,
+        "visibility_mi": 15
+      },
+      "sun": {
+        "alt": -0.4,
+        "az": 294,
+        "sunrise": "6:37 am",
+        "sunset": "8:39 pm",
+        "mins_to_sunset": 1,
+        "mins_since_sunrise": 841
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/25",
+          "1/13"
+        ],
+        "iso": [100, 200],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 1355,
+        "gimbal": [-90, 15]
+      }
     },
     {
       "file": "media/360/misty-ridge-at-dusk.jpg",
@@ -166,7 +779,38 @@
       "location": "Maggie Valley, NC",
       "date": "Jul 28, 2026",
       "time": "8:35 pm",
-      "alt": "8 m"
+      "alt": "8 m",
+      "weather": {
+        "temp_f": 70,
+        "code": 0,
+        "cloud": 6,
+        "humidity": 94,
+        "wind_mph": 5,
+        "gust_mph": 9,
+        "wind_dir": 272,
+        "visibility_mi": 15
+      },
+      "sun": {
+        "alt": 0.1,
+        "az": 293,
+        "sunrise": "6:37 am",
+        "sunset": "8:39 pm",
+        "mins_to_sunset": 4,
+        "mins_since_sunrise": 838
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 48,
+        "shutter": [
+          "1/200",
+          "1/50"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 1336,
+        "gimbal": [-90, 15]
+      }
     }
   ]
 }
