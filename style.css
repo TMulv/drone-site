@@ -211,8 +211,16 @@ body.inside .pill[aria-pressed="true"] { background: #fff; color: var(--ink); bo
 @media (prefers-reduced-motion: reduce) { .flyer { transition: none; } }
 
 /* ---------- the full-screen 360 viewer ---------- */
-#viewer { position: fixed; inset: 0; z-index: 10; }
-#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+#viewer { position: fixed; inset: 0; z-index: 10; pointer-events: none; }
+#viewer .back { pointer-events: auto; }
+/* one canvas, two jobs: a faint 360 printed onto the paper behind the list, then the full viewer when you step in */
+#scene {
+  position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab;
+  z-index: 0; pointer-events: none; opacity: .2; mix-blend-mode: multiply; filter: saturate(.6) contrast(.9);
+  transition: opacity .7s ease, filter .7s ease;
+}
+#scene.dip { opacity: 0; }
+body.viewing #scene { opacity: 1; mix-blend-mode: normal; filter: none; pointer-events: auto; }
 #scene:active { cursor: grabbing; }
 
 .back {

@@ -1,6 +1,6 @@
 # Tyler Mulvey · Aerial 360
 
-A sortable list of your 360s on the left (by date, city, or state; click the active sort again to flip it). Pick one and the right side shows its photo, details, and a map of where it was shot. Click the photo and it grows full screen into the panorama: drag to look around, scroll or pinch to zoom, Esc or "back to the list" to leave. On phones there's no right side, so tapping a row steps straight in.
+The selected 360 drifts faintly behind the page. A sortable list of your 360s on the left (by date, city, or state; click the active sort again to flip it). Pick one and the right side shows its photo, details, and a map of where it was shot. Click the photo and it grows full screen into the panorama: drag to look around, scroll or pinch to zoom, Esc or "back to the list" to leave. On phones there's no right side, so tapping a row steps straight in.
 
 No build step: `index.html`, `style.css`, `script.js`, and three.js from a CDN.
 
@@ -53,7 +53,7 @@ Leaflet (loaded from cdnjs) with CARTO's light basemap, tinted warm in `style.cs
 
 ## Controls
 
-Inside a panorama: **zoom** with the scroll wheel, a trackpad or touchscreen pinch, the + / − buttons, or the + / − keys (0 resets, double-click toggles a close-up). Dragging slows down as you zoom in so the view stays under your finger. Also **hide text while turning** (the words fade while you drag or scroll to look around, and the setting is remembered) and **full screen** (or press F), top right. iPhone Safari doesn't allow full screen for web pages, so that button hides itself there. Esc or the "back to the list" button (top left) takes you out.
+Inside a panorama: **zoom** with the scroll wheel, a trackpad or touchscreen pinch, the + / − buttons, or the + / − keys (0 resets, double-click toggles a close-up). Dragging slows down as you zoom in so the view stays under your finger. **Auto spin** (top right) turns the view on its own; drag anytime to take over. Also **hide text while turning** (the words fade while you drag or scroll to look around, and the setting is remembered) and **full screen** (or press F), top right. iPhone Safari doesn't allow full screen for web pages, so that button hides itself there. Esc or the "back to the list" button (top left) takes you out.
 
 ## Preview
 

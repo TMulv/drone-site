@@ -42,7 +42,7 @@ addEventListener('resize', resize); resize();
 // Inverted sphere the camera sits at the center of.
 const sphere = new THREE.Mesh(
   new THREE.SphereGeometry(50, 96, 48).scale(-1, 1, 1),
-  new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
+  new THREE.MeshBasicMaterial({ depthWrite: false })
 );
 sphere.rotation.y = -Math.PI / 2; // matches the thumbnail crop's horizon-centered framing
 sphere.visible = false;
@@ -208,7 +208,7 @@ function sunLines(s) {
     : sinceRise != null && sinceRise >= 0 && sinceRise <= 120 ? `${mins(sinceRise)} after sunrise`
     : sinceRise != null && sinceRise < 0 && sinceRise >= -90 ? `${mins(-sinceRise)} before sunrise`
     : s.sunset && `sunset at ${s.sunset}`;
-  const where = s.alt >= 0 ? `sun ${Math.round(s.alt)}° up in the ${toCompass(s.az)}` : `sun ${Math.round(-s.alt)}° below the horizon`;
+  const where = Math.round(s.alt) === 0 ? 'sun right on the horizon' : s.alt > 0 ? `sun ${Math.round(s.alt)}° up in the ${toCompass(s.az)}` : `sun ${Math.round(-s.alt)}° below the horizon`;
   return [phase, timing, where];
 }
 function flightLines(f) {
@@ -240,6 +240,26 @@ function renderFacts(it) {
   }).filter(Boolean));
 }
 
+// ---------- the drifting 360 behind the list ----------
+let texFor = -1, backdropTimer;
+const loadTex = i => loader.loadAsync(items[i].file).then(t => { t.colorSpace = THREE.SRGBColorSpace; return t; });
+function applyTex(tex, i) {
+  if (sphere.material.map) sphere.material.map.dispose(); // one full-size pano in memory at a time
+  sphere.material.map = tex; sphere.material.needsUpdate = true; sphere.visible = true; texFor = i;
+}
+function backdrop(i) { // waits a beat so arrowing down the list doesn't download every pano
+  clearTimeout(backdropTimer);
+  backdropTimer = setTimeout(async () => {
+    if (texFor === i) return;
+    const tex = await loadTex(i);
+    if (sel !== i || mode !== 'browse') return tex.dispose(); // moved on while it loaded
+    canvas.classList.add('dip');
+    await new Promise(r => setTimeout(r, texFor < 0 ? 0 : D(700)));
+    applyTex(tex, i);
+    canvas.classList.remove('dip');
+  }, 300);
+}
+
 // ---------- the right pane ----------
 function select(i, { pan = true, scroll = false } = {}) {
   const it = items[i];
@@ -254,6 +274,7 @@ function select(i, { pan = true, scroll = false } = {}) {
   detailTitle.textContent = it.location || '';
   fillMeta(detailMeta, it);
   renderFacts(it);
+  backdrop(i);
   highlightTown(it.location, pan);
 }
 function showEmpty(query) {
@@ -386,6 +407,10 @@ function turning() {
   quietTimer = setTimeout(() => document.body.classList.remove('quiet'), 1000);
 }
 
+// ---------- auto spin (inside a pano) ----------
+let spinOn = false;
+$('spin').addEventListener('click', e => { spinOn = !spinOn; e.currentTarget.setAttribute('aria-pressed', String(spinOn)); });
+
 // ---------- full screen ----------
 const fsBtn = $('fs');
 if (document.fullscreenEnabled) { // not on iPhone Safari, which only allows full screen for video
@@ -485,7 +510,8 @@ async function enter(i, sourceImg = detailImg) {
   Object.assign(flyer.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
   document.body.appendChild(flyer);
 
-  const texReady = loader.loadAsync(it.file).then(t => { t.colorSpace = THREE.SRGBColorSpace; return t; });
+  clearTimeout(backdropTimer);
+  const texReady = texFor === i ? null : loadTex(i);
 
   await tween(D(350), t => { browseEl.style.opacity = String(1 - t); });
   browseEl.hidden = true; browseEl.style.opacity = '';
@@ -494,14 +520,14 @@ async function enter(i, sourceImg = detailImg) {
   requestAnimationFrame(() => flyer.classList.add('full'));
   await (reduceMotion ? Promise.resolve() : new Promise(res => flyer.addEventListener('transitionend', res, { once: true })));
 
-  const tex = await texReady;
-  sphere.material.map = tex; sphere.material.needsUpdate = true;
-  sphere.visible = true;
-  lon = 0; lat = 0; vLon = vLat = 0;
+  if (texReady) applyTex(await texReady, i);
+  canvas.classList.remove('dip');
+  lon = 0; lat = 0; vLon = vLat = 0; // face the direction the card showed
   fovTarget = FOV_HOME; camera.fov = FOV_HOME; camera.updateProjectionMatrix();
+  document.body.classList.add('viewing');
   viewerEl.hidden = false;
   compassWrap.hidden = false; $('viewerControls').hidden = false;
-  await tween(D(400), t => { sphere.material.opacity = t; flyer.style.opacity = String(1 - t); document.body.classList.toggle('inside', t > 0.5); });
+  await tween(D(400), t => { flyer.style.opacity = String(1 - t); document.body.classList.toggle('inside', t > 0.5); });
   flyer.remove();
 
   mode = 'pano';
@@ -514,8 +540,8 @@ async function leave() {
   if (mode !== 'pano') return;
   mode = 'leaving';
   backBtn.hidden = true;
-  await tween(D(400), t => { sphere.material.opacity = 1 - t; document.body.classList.toggle('inside', t < 0.5); });
-  sphere.visible = false;
+  document.body.classList.remove('viewing', 'inside'); // canvas eases back down to a faint backdrop
+  fovTarget = FOV_HOME;
   viewerEl.hidden = true;
   compassWrap.hidden = true; $('viewerControls').hidden = true; $('browseControls').hidden = false;
   browseEl.hidden = false; browseEl.style.opacity = '0';
@@ -528,6 +554,8 @@ async function leave() {
 // ---------- loop (only while a pano is on screen) ----------
 function frame() {
   if (mode === 'pano' && !dragging) { lon += vLon; lat += vLat; vLon *= 0.92; vLat *= 0.92; }
+  if (mode === 'pano' && spinOn && !dragging) lon += 0.08;
+  if (mode === 'browse') { lat *= 0.97; if (!reduceMotion) lon += 0.025; } // slow drift behind the list
   if (sphere.visible) {
     if (Math.abs(camera.fov - fovTarget) > 0.01) { camera.fov += (fovTarget - camera.fov) * (reduceMotion ? 1 : 0.18); camera.updateProjectionMatrix(); }
     lat = THREE.MathUtils.clamp(lat, -85, 85);

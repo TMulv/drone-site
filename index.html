@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<canvas id="scene"></canvas>
 <div class="grain" aria-hidden="true"></div>
 
 <header>
@@ -32,6 +33,7 @@
       <button id="zoomOut" class="pill" type="button" aria-label="zoom out">&minus;</button>
       <button id="zoomIn" class="pill" type="button" aria-label="zoom in">+</button>
     </div>
+    <button id="spin" class="pill" aria-pressed="false">auto spin</button>
     <button id="quiet" class="pill" aria-pressed="false">hide text while turning</button>
     <button id="fs" class="pill" hidden>full screen</button>
   </nav>
@@ -63,7 +65,6 @@
 </main>
 
 <div id="viewer" hidden>
-  <canvas id="scene"></canvas>
   <button id="back" class="back" hidden>← back to the list</button>
   <footer id="caption" aria-live="polite">
     <div class="count">no. <span id="idx">01</span><i></i><span id="total">20</span></div>
