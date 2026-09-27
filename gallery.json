@@ -587,13 +587,13 @@
       "alt": "79 m",
       "weather": {
         "temp_f": 77,
-        "code": 51,
-        "cloud": 100,
-        "humidity": 71,
-        "wind_mph": 10,
-        "gust_mph": 16,
-        "wind_dir": 143,
-        "visibility_mi": 15
+        "code": 3,
+        "cloud": 99,
+        "humidity": 76,
+        "wind_mph": 9,
+        "gust_mph": 17,
+        "wind_dir": 127,
+        "visibility_mi": 13
       },
       "sun": {
         "alt": 26.3,
@@ -626,13 +626,13 @@
       "alt": "78 m",
       "weather": {
         "temp_f": 77,
-        "code": 51,
-        "cloud": 100,
-        "humidity": 71,
-        "wind_mph": 10,
-        "gust_mph": 16,
-        "wind_dir": 143,
-        "visibility_mi": 15
+        "code": 3,
+        "cloud": 99,
+        "humidity": 76,
+        "wind_mph": 9,
+        "gust_mph": 17,
+        "wind_dir": 127,
+        "visibility_mi": 13
       },
       "sun": {
         "alt": 28.3,
@@ -664,14 +664,14 @@
       "time": "1:51 pm",
       "alt": "41 m",
       "weather": {
-        "temp_f": 83,
-        "code": 3,
-        "cloud": 100,
-        "humidity": 52,
-        "wind_mph": 14,
+        "temp_f": 77,
+        "code": 80,
+        "cloud": 99,
+        "humidity": 82,
+        "wind_mph": 10,
         "gust_mph": 18,
-        "wind_dir": 153,
-        "visibility_mi": 15
+        "wind_dir": 137,
+        "visibility_mi": 11
       },
       "sun": {
         "alt": 64.6,
@@ -703,14 +703,14 @@
       "time": "2:33 pm",
       "alt": "7 m",
       "weather": {
-        "temp_f": 82,
+        "temp_f": 83,
         "code": 0,
         "cloud": 18,
-        "humidity": 40,
-        "wind_mph": 4,
+        "humidity": 48,
+        "wind_mph": 2,
         "gust_mph": 3,
-        "wind_dir": 235,
-        "visibility_mi": 15
+        "wind_dir": 337,
+        "visibility_mi": 25
       },
       "sun": {
         "alt": 69,
@@ -742,14 +742,14 @@
       "time": "8:38 pm",
       "alt": "28 m",
       "weather": {
-        "temp_f": 70,
+        "temp_f": 73,
         "code": 0,
         "cloud": 6,
-        "humidity": 94,
-        "wind_mph": 5,
-        "gust_mph": 9,
-        "wind_dir": 272,
-        "visibility_mi": 15
+        "humidity": 77,
+        "wind_mph": 1,
+        "gust_mph": 7,
+        "wind_dir": 284,
+        "visibility_mi": 12
       },
       "sun": {
         "alt": -0.4,
@@ -781,14 +781,14 @@
       "time": "8:35 pm",
       "alt": "8 m",
       "weather": {
-        "temp_f": 70,
+        "temp_f": 73,
         "code": 0,
         "cloud": 6,
-        "humidity": 94,
-        "wind_mph": 5,
-        "gust_mph": 9,
-        "wind_dir": 272,
-        "visibility_mi": 15
+        "humidity": 77,
+        "wind_mph": 1,
+        "gust_mph": 7,
+        "wind_dir": 284,
+        "visibility_mi": 12
       },
       "sun": {
         "alt": 0.1,
