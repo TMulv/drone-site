@@ -554,7 +554,7 @@ async function leave() {
 // ---------- loop (only while a pano is on screen) ----------
 function frame() {
   if (mode === 'pano' && !dragging) { lon += vLon; lat += vLat; vLon *= 0.92; vLat *= 0.92; }
-  if (mode === 'pano' && spinOn && !dragging) lon += 0.08;
+  if (mode === 'pano' && spinOn && !dragging) lon += 0.05;
   if (mode === 'browse') { lat *= 0.97; if (!reduceMotion) lon += 0.025; } // slow drift behind the list
   if (sphere.visible) {
     if (Math.abs(camera.fov - fovTarget) > 0.01) { camera.fov += (fovTarget - camera.fov) * (reduceMotion ? 1 : 0.18); camera.updateProjectionMatrix(); }
