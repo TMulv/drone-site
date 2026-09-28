@@ -18,5 +18,12 @@ let errors = 0;
   if (p.location && !(Array.isArray(t) ? t : t && t.ll)) { console.error(`"${p.location}" has no map pin: add it to "towns" as { "ll": [lat, lng] } of the town center`); errors++; }
 });
 
+// 360s taken off on purpose (skip.json) must stay off
+const skip = fs.existsSync('skip.json') ? JSON.parse(fs.readFileSync('skip.json', 'utf8')) : [];
+(data.panoramas || []).forEach((p, i) => {
+  const hit = skip.find(k => k.location === p.location && k.date === p.date && k.time === p.time);
+  if (hit) { console.error(`panoramas[${i}] (${p.location}, ${p.date} ${p.time}) is on skip.json's do-not-add list: remove it`); errors++; }
+});
+
 if (errors) { console.error(`${errors} problem(s). Fix gallery.json before deploying.`); process.exit(1); }
 console.log(`gallery.json looks good (${data.panoramas.length} panoramas).`);

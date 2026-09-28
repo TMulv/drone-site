@@ -423,45 +423,6 @@
       }
     },
     {
-      "file": "media/360/backyard-patio.jpg",
-      "thumb": "media/360/thumbs/backyard-patio.jpg",
-      "location": "Wyckoff, NJ",
-      "date": "Aug 15, 2026",
-      "time": "7:57 pm",
-      "alt": "5 m",
-      "weather": {
-        "temp_f": 75,
-        "code": 0,
-        "cloud": 0,
-        "humidity": 51,
-        "wind_mph": 2,
-        "gust_mph": 2,
-        "wind_dir": 240,
-        "visibility_mi": 24
-      },
-      "sun": {
-        "alt": -1,
-        "az": 290,
-        "sunrise": "6:06 am",
-        "sunset": "7:55 pm",
-        "mins_to_sunset": -2,
-        "mins_since_sunrise": 831
-      },
-      "flight": {
-        "frames": 26,
-        "duration_s": 52,
-        "shutter": [
-          "1/10",
-          "1/8"
-        ],
-        "iso": [400, 800],
-        "f": 2.8,
-        "focal35": 24,
-        "msl_m": 52,
-        "gimbal": [-90, 15]
-      }
-    },
-    {
       "file": "media/360/sunset-over-the-suburbs.jpg",
       "thumb": "media/360/thumbs/sunset-over-the-suburbs.jpg",
       "location": "Wyckoff, NJ",

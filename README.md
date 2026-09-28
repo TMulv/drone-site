@@ -90,6 +90,10 @@ git add -A && git commit -m "add new 360s" && git push
 
 6. Clear out the raw folders `enrich.js` listed as already on the site (see Saving space).
 
+### Taking one off for good
+
+Delete its entry from `gallery.json` and its two files in `media/360/`, then add it to `skip.json` (same `location`, `date`, `time`). That keeps it from coming back: `validate.js` fails if a skipped 360 shows up in `gallery.json` again, and `enrich.js` lists its raw set as removed instead of "new sets to stitch". Anyone (or any Claude) syncing new photos should check `skip.json` first.
+
 Got a round "little planet" from DJI Fly instead of a flat 2:1 image? `python3 unplanet.py planet.jpg media/360/new-shot.jpg` converts it (needs `pip3 install numpy pillow scipy`).
 
 ## Deploy

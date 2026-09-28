@@ -7,6 +7,8 @@ if (typeof fetch !== 'function') { console.error('Needs Node 18 or newer (run: n
 
 const GALLERY = 'gallery.json';
 const data = JSON.parse(fs.readFileSync(GALLERY, 'utf8'));
+// 360s taken off the site on purpose. Their raw sets get listed as removed, never as "new sets to stitch".
+const SKIP = fs.existsSync('skip.json') ? JSON.parse(fs.readFileSync('skip.json', 'utf8')) : [];
 const towns = data.towns || {};
 const llOf = t => Array.isArray(t) ? t : t && t.ll;
 
@@ -228,11 +230,19 @@ function summarizeSet(set) {
   // which raw photo folders the site no longer needs
   if (sets.length) {
     const rel = d => path.relative(sdRoot, d) || '.';
-    const done = sets.filter(s => used.has(s.dir)), rest = sets.filter(s => !used.has(s.dir));
+    const skipped = new Set();
+    for (const k of SKIP) { // the unclaimed full sphere that started closest to the skipped 360's time
+      const w = wallClock(k); if (!w) continue;
+      const target = Date.UTC(w.y, w.mo, w.d, w.h, w.mi) / 1000;
+      const best = sets.filter(s => !used.has(s.dir) && s.flight.frames >= 20 && Math.abs(s.start - target) <= 600)
+        .sort((a, b) => Math.abs(a.start - target) - Math.abs(b.start - target))[0];
+      if (best) skipped.add(best.dir);
+    }
+    const done = sets.filter(s => used.has(s.dir) || skipped.has(s.dir)), rest = sets.filter(s => !used.has(s.dir) && !skipped.has(s.dir));
     const size = ds => ds.reduce((t, s) => t + fs.readdirSync(s.dir).reduce((a, f) => { try { return a + fs.statSync(path.join(s.dir, f)).size; } catch { return a; } }, 0), 0);
     const gb = b => b > 1e9 ? `${(b / 1e9).toFixed(1)} GB` : `${Math.round(b / 1e6)} MB`;
     console.log(`\nAlready on the site, info saved (${gb(size(done))}). Safe to archive or delete:`);
-    done.forEach(s => console.log(`  ${rel(s.dir)}`));
+    done.forEach(s => console.log(`  ${rel(s.dir)}${skipped.has(s.dir) ? '  (removed on purpose, see skip.json)' : ''}`));
     if (rest.length) {
       console.log(`\nNot on the site (${gb(size(rest))}). New sets to stitch, or extras like wide/180 shots:`);
       rest.forEach(s => console.log(`  ${rel(s.dir)}  (${s.flight.frames} frames)`));
