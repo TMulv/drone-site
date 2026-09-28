@@ -56,6 +56,11 @@ header > * { pointer-events: auto; }
 .pill:hover { opacity: 1; }
 .pill[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); opacity: 1; }
 body.inside .pill[aria-pressed="true"] { background: #fff; color: var(--ink); border-color: #fff; }
+/* frosted pills inside a 360, so they stay readable over a bright cloud now that they're often all that's on screen */
+body.inside .pill:not([aria-pressed="true"]):not(.on), body.inside .back {
+  background-color: rgba(20, 20, 18, .22); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+body.inside .back:hover { background-color: #fff; }
 
 .search {
   display: flex; align-items: center; gap: 8px;
@@ -65,7 +70,7 @@ body.inside .pill[aria-pressed="true"] { background: #fff; color: var(--ink); bo
 .search:focus-within { opacity: 1; }
 .search input {
   background: none; border: none; outline: none; color: inherit; font: inherit;
-  font-size: 13px; letter-spacing: inherit; text-transform: inherit; width: 200px; max-width: 32vw;
+  font-size: 13px; letter-spacing: inherit; text-transform: inherit; width: 290px; max-width: 32vw;
 }
 .search input::placeholder { color: currentColor; opacity: .6; }
 #searchCount { font-size: 11px; color: var(--muted); white-space: nowrap; }
@@ -74,6 +79,9 @@ body.inside .pill[aria-pressed="true"] { background: #fff; color: var(--ink); bo
 .clear:hover { opacity: 1; }
 
 .zoom { display: flex; gap: 4px; }
+/* full screen: words on big screens, a corners icon on phones */
+#fs .ico { display: none; width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+body.inside #fs.on { background: #fff; color: var(--ink); border-color: #fff; opacity: 1; }
 .zoom .pill { width: 34px; padding: 7px 0; text-align: center; font-size: 15px; line-height: 1; }
 
 /* compass tape: ticks every 5°, taller every 45°; slides as you look around */
@@ -233,8 +241,9 @@ body.viewing #scene { opacity: 1; mix-blend-mode: normal; filter: none; pointer-
 .back {
   position: fixed; top: 76px; left: 28px; background: none; border: 1px solid currentColor; border-radius: 999px;
   padding: 7px 13px; font: inherit; font-size: 13px; letter-spacing: inherit; text-transform: inherit; color: inherit; cursor: pointer;
-  transition: background .3s, color .3s;
+  transition: top .45s cubic-bezier(.22, .68, 0, 1), background .3s, color .3s;
 }
+body.wordsOff .back { top: 22px; } /* the name is gone, so back slides up into its corner */
 .back:hover { background: #fff; color: var(--ink); }
 
 #caption {
@@ -266,28 +275,61 @@ header::before { top: 0; height: 140px; background: linear-gradient(rgba(0, 0, 0
 body.inside #caption::before, body.inside header::before { opacity: 1; }
 body.inside #scene { cursor: grab; }
 
-/* hide-text mode: the words step aside while you look around, the controls stay put */
-.mark, .compass, #caption { transition: opacity .45s; }
-body.quiet .mark, body.quiet .compass, body.quiet #caption { opacity: 0; }
+/* words off (the default every time you step into a 360): name, compass, and caption step aside, back + controls stay put */
+.mark, .compass, #caption { transition: opacity .45s, visibility .45s; }
+body.wordsOff .mark, body.wordsOff .compass, body.wordsOff #caption { opacity: 0; visibility: hidden; }
 
-@media (max-width: 780px) {
-  header { grid-template-columns: 1fr auto; padding: 16px 16px; }
+/* phones, portrait or landscape */
+@media (max-width: 780px), (max-height: 500px) {
+  header { grid-template-columns: 1fr auto; column-gap: 12px; padding: 16px; }
   .compass { display: none; }
   .controls { grid-column: 2; }
-  .pill { font-size: 12px; padding: 6px 11px; }
+  .pill { font-size: 12px; padding: 9px 13px; }
+  .wide { display: none; } /* "auto spin" -> "spin", "back to the list" -> "back" */
   .zoom { display: none; } /* phones pinch instead */
-  #quiet { max-width: 9.5em; white-space: normal; text-align: center; line-height: 1.15; }
-  .search input { width: 120px; max-width: 40vw; }
-  .back { top: 64px; left: 16px; }
-  #caption { bottom: 20px; }
+  #fs { width: 36px; min-height: 36px; padding: 0; display: inline-grid; place-items: center; }
+  #fs .lbl { display: none; }
+  #fs .ico { display: block; }
+  .search { padding: 7px 10px 7px 14px; }
+  .search input { width: 220px; max-width: 42vw; font-size: 16px; } /* 16px or iOS Safari zooms the page when you tap into it */
+
+  /* inside a 360 the name bows out for good: back takes the top-left corner, controls the top-right */
+  body.viewing .mark { display: none; }
+  body.viewing #viewerControls { max-width: calc(100vw - 32px - 92px); } /* wrap before ever running into back */
+  .back, body.wordsOff .back { top: 16px; left: 16px; font-size: 12px; padding: 9px 13px; }
+  #caption { bottom: 18px; padding: 0 16px; }
+  #caption h1 { font-size: 24px; margin: 10px 0; }
+  #caption .meta { font-size: 12px; }
+  #caption .meta span + span::before { margin: 0 .6em; }
+  #caption .hint { margin-top: 10px; font-size: 11px; }
 
   #browse { padding-top: 84px; }
   .detail { display: none; }
   .list { max-width: none; min-width: 0; border-right: none; }
-  .sortbar { padding: 4px 20px 12px; }
-  #entries li.group { padding: 20px 20px 8px; }
-  .entry { padding: 13px 20px; }
+  .sortbar { padding: 4px 16px 12px; }
+  .sortLabel { display: none; } /* keeps date / city / state / newest first on one line */
+  #entries li.group { padding: 20px 16px 8px; }
+  .entry { padding: 12px 16px; }
   .entry img { width: 60px; height: 78px; }
+}
+
+/* narrow phones: search gets its own full-width row under the name so neither gets squeezed */
+@media (max-width: 560px) {
+  body:not(.viewing) header { grid-template-columns: 1fr; row-gap: 14px; }
+  #browseControls { grid-column: 1; justify-self: stretch; }
+  .search { flex: 1; }
+  .sortbar { gap: 2px; }
+  .sort, .dir { padding: 5px 9px; }
+  .dir { padding-right: 0; }
+  .search input { flex: 1; width: auto; max-width: none; min-width: 0; }
+  #browse { padding-top: 128px; }
+}
+
+/* the smallest phones: a little less air inside the pills */
+@media (max-width: 360px) {
+  .pill, .back, body.wordsOff .back { padding-left: 10px; padding-right: 10px; }
+  .controls { gap: 6px; }
+  body.viewing #viewerControls { max-width: calc(100vw - 112px); }
 }
 
 /* mid-size screens: stack photo, text, and map in the right pane */

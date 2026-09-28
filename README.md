@@ -53,7 +53,7 @@ Leaflet (loaded from cdnjs) with CARTO's light basemap, tinted warm in `style.cs
 
 ## Controls
 
-Inside a panorama: **zoom** with the scroll wheel, a trackpad or touchscreen pinch, the + / − buttons, or the + / − keys (0 resets, double-click toggles a close-up). Dragging slows down as you zoom in so the view stays under your finger. **Auto spin** (top right) turns the view on its own; drag anytime to take over. Also **hide text while turning** (the words fade while you drag or scroll to look around, and the setting is remembered) and **full screen** (or press F), top right. iPhone Safari doesn't allow full screen for web pages, so that button hides itself there. Esc or the "back to the list" button (top left) takes you out.
+Inside a panorama: **zoom** with the scroll wheel, a trackpad or touchscreen pinch, the + / − buttons, or the + / − keys (0 resets, double-click toggles a close-up). Dragging slows down as you zoom in so the view stays under your finger. **Auto spin** (top right) turns the view on its own; drag anytime to take over. The words (name, compass, caption) start hidden every time you step in so it's just the view; tap the panorama, press T, or hit **show text** (top right) to bring them back. Also **full screen** (or press F), top right; on phones it's a corners icon. iPhone Safari doesn't allow full screen for web pages, so that button hides itself there. Esc or the "back to the list" button (top left) takes you out.
 
 ## Preview
 

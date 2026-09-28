@@ -34,9 +34,12 @@
       <button id="zoomOut" class="pill" type="button" aria-label="zoom out">&minus;</button>
       <button id="zoomIn" class="pill" type="button" aria-label="zoom in">+</button>
     </div>
-    <button id="spin" class="pill" aria-pressed="false">auto spin</button>
-    <button id="quiet" class="pill" aria-pressed="false">hide text while turning</button>
-    <button id="fs" class="pill" hidden>full screen</button>
+    <button id="spin" class="pill" aria-pressed="false"><span class="wide">auto </span>spin</button>
+    <button id="words" class="pill" type="button">show text</button>
+    <button id="fs" class="pill" type="button" aria-label="full screen" hidden>
+      <span class="lbl">full screen</span>
+      <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg>
+    </button>
   </nav>
 </header>
 
@@ -66,7 +69,7 @@
 </main>
 
 <div id="viewer" hidden>
-  <button id="back" class="back" hidden>← back to the list</button>
+  <button id="back" class="back" hidden>← back<span class="wide"> to the list</span></button>
   <footer id="caption" aria-live="polite">
     <div class="count">no. <span id="idx">01</span><i></i><span id="total">20</span></div>
     <h1 id="title">&nbsp;</h1>

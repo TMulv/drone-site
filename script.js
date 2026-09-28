@@ -60,7 +60,10 @@ const detailPhoto = $('detailPhoto'), detailImg = $('detailImg'), detailTitle = 
 const searchBox = $('search'), searchClear = $('searchClear'), searchCount = $('searchCount');
 const compassWrap = $('compassWrap'), backBtn = $('back'), hintEl = $('hint');
 const mapEl = $('map'), sortDirBtn = $('sortDir'), factsEl = $('detailFacts');
-const phoneLayout = matchMedia('(max-width: 780px)'); // no detail pane there: tapping a row steps straight in
+const phoneLayout = matchMedia('(max-width: 780px), (max-height: 500px)'); // phones, either way up: no detail pane, tapping a row steps straight in
+// phones get the search text at 16px (so iOS doesn't zoom in on tap), which leaves room for a shorter placeholder
+const syncPlaceholder = () => { $('search').placeholder = phoneLayout.matches ? 'town, state, year, season' : 'search town, state, year, season'; };
+phoneLayout.addEventListener('change', syncPlaceholder); syncPlaceholder();
 
 function metaLine(it) {
   return [it.date, it.time, it.alt && it.alt + ' up'].filter(Boolean);
@@ -389,23 +392,14 @@ renderList();
 ensureMap();
 if (order.length) select(order[0], { pan: false });
 
-// ---------- hide text while turning (inside a pano) ----------
-let quietOn = false, quietTimer;
-try { quietOn = localStorage.getItem('quiet') === '1'; } catch {}
-const quietBtn = $('quiet');
-const syncQuiet = () => quietBtn.setAttribute('aria-pressed', String(quietOn));
-syncQuiet();
-quietBtn.addEventListener('click', () => {
-  quietOn = !quietOn; syncQuiet();
-  try { localStorage.setItem('quiet', quietOn ? '1' : '0'); } catch {}
-  if (!quietOn) document.body.classList.remove('quiet');
-});
-function turning() {
-  if (!quietOn || mode !== 'pano') return;
-  document.body.classList.add('quiet');
-  clearTimeout(quietTimer);
-  quietTimer = setTimeout(() => document.body.classList.remove('quiet'), 1000);
+// ---------- words inside a pano: hidden every time you step in; tap, T, or the pill brings them back ----------
+const wordsBtn = $('words');
+function setWords(on) {
+  document.body.classList.toggle('wordsOff', !on);
+  wordsBtn.textContent = on ? 'hide text' : 'show text';
 }
+wordsBtn.addEventListener('click', () => setWords(document.body.classList.contains('wordsOff')));
+const toggleWords = () => { if (mode === 'pano') setWords(document.body.classList.contains('wordsOff')); };
 
 // ---------- auto spin (inside a pano) ----------
 let spinOn = false;
@@ -418,7 +412,12 @@ if (document.fullscreenEnabled) { // not on iPhone Safari, which only allows ful
   const toggleFs = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
   fsBtn.addEventListener('click', toggleFs);
   addEventListener('keydown', e => { if (e.key === 'f' && !e.metaKey && !e.ctrlKey && document.activeElement !== searchBox) toggleFs(); });
-  document.addEventListener('fullscreenchange', () => { fsBtn.textContent = document.fullscreenElement ? 'exit full screen' : 'full screen'; });
+  document.addEventListener('fullscreenchange', () => {
+    const label = document.fullscreenElement ? 'exit full screen' : 'full screen';
+    fsBtn.querySelector('.lbl').textContent = label;
+    fsBtn.setAttribute('aria-label', label);
+    fsBtn.classList.toggle('on', !!document.fullscreenElement);
+  });
 }
 
 // ---------- look around + zoom inside a pano ----------
@@ -431,11 +430,14 @@ const zoomBy = factor => setZoom(fovTarget * factor);
 const pointers = new Map(); // active touches/mouse, for drag and pinch
 let dragging = false, last = null, pinchDist = 0;
 const spread = () => { const [a, b] = [...pointers.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+// a tap (press, barely move, let go) toggles the words; held off a beat so a double-click zoom doesn't also flip them
+let tap = null, tapTimer;
 
 canvas.addEventListener('pointerdown', e => {
   if (mode !== 'pano') return;
   canvas.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  tap = pointers.size === 1 ? { x: e.clientX, y: e.clientY, t: performance.now() } : null;
   if (pointers.size === 1) { dragging = true; last = [e.clientX, e.clientY]; }
   if (pointers.size === 2) { dragging = false; pinchDist = spread(); }
 });
@@ -453,9 +455,14 @@ canvas.addEventListener('pointermove', e => {
   last = [e.clientX, e.clientY];
   const k = 0.12 * (camera.fov / FOV_HOME); // zoomed in = slower drag, so the image tracks your finger
   vLon = -dx * k; vLat = dy * k; lon += vLon; lat += vLat;
-  turning();
+  if (tap && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 8) tap = null;
 });
 const release = e => {
+  if (e.type === 'pointerup' && tap && pointers.size === 1 && performance.now() - tap.t < 350) {
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(toggleWords, 260);
+  }
+  tap = null;
   pointers.delete(e.pointerId);
   if (pointers.size < 2) pinchDist = 0;
   if (pointers.size === 1) { const p = [...pointers.values()][0]; dragging = true; last = [p.x, p.y]; } // pinch -> drag without a jump
@@ -470,13 +477,14 @@ addEventListener('wheel', e => {
   // trackpad pinch arrives as ctrl+wheel with small deltas; mouse wheel as bigger ones
   zoomBy(Math.exp(e.deltaY * (e.ctrlKey ? 0.01 : 0.0015)));
 }, { passive: false });
-canvas.addEventListener('dblclick', () => { if (mode === 'pano') setZoom(fovTarget > FOV_HOME - 5 ? 40 : FOV_HOME); });
+canvas.addEventListener('dblclick', () => { clearTimeout(tapTimer); if (mode === 'pano') setZoom(fovTarget > FOV_HOME - 5 ? 40 : FOV_HOME); });
 
 addEventListener('keydown', e => {
   if (document.activeElement === searchBox || mode !== 'pano') return;
   if (e.key === 'Escape') leave();
-  if (e.key === 'ArrowRight') { vLon += 3; turning(); }
-  if (e.key === 'ArrowLeft') { vLon -= 3; turning(); }
+  if (e.key === 't' && !e.metaKey && !e.ctrlKey) toggleWords();
+  if (e.key === 'ArrowRight') vLon += 3;
+  if (e.key === 'ArrowLeft') vLon -= 3;
   if (e.key === 'ArrowUp') vLat += 2;
   if (e.key === 'ArrowDown') vLat -= 2;
   if (e.key === '+' || e.key === '=') zoomBy(0.8);
@@ -501,6 +509,7 @@ async function enter(i, sourceImg = detailImg) {
   const it = items[i];
   if (!it) return;
   mode = 'entering'; active = i;
+  setWords(false); // words start hidden every time you step in
 
   const thumbEl = sourceImg.getBoundingClientRect().width ? sourceImg : rows[i].querySelector('img');
   const round = thumbEl === detailImg;
@@ -548,7 +557,8 @@ async function leave() {
   if (mode !== 'pano') return;
   mode = 'leaving';
   backBtn.hidden = true;
-  document.body.classList.remove('viewing', 'inside'); // canvas eases back down to a faint backdrop
+  clearTimeout(tapTimer);
+  document.body.classList.remove('viewing', 'inside', 'wordsOff'); // canvas eases back down to a faint backdrop
   fovTarget = FOV_HOME;
   viewerEl.hidden = true;
   compassWrap.hidden = true; $('viewerControls').hidden = true; $('browseControls').hidden = false;
