@@ -1,6 +1,6 @@
 # Tyler Mulvey · Aerial 360
 
-The selected 360 drifts faintly behind the page. A sortable list of your 360s on the left (by date, city, or state; click the active sort again to flip it). Pick one and the right side shows its photo, details, and a map of where it was shot. Click the photo and it grows full screen into the panorama: drag to look around, scroll or pinch to zoom, Esc or "back to the list" to leave. On phones there's no right side, so tapping a row steps straight in.
+The selected 360 drifts faintly behind the page. A sortable list of your 360s on the left (by date, city, state, or season; click the active sort again to flip it). Pick one and the right side shows its photo, details, and a map of where it was shot. Click the photo and it grows full screen into the panorama: drag to look around, scroll or pinch to zoom, Esc or "back to the list" to leave. On phones there's no right side, so tapping a row steps straight in.
 
 No build step: `index.html`, `style.css`, `script.js`, and three.js from a CDN.
 
@@ -13,6 +13,13 @@ Everything else (locations, dates, buttons, hints) uses **Lemon Milk** by MARSNE
 ## Search
 
 The search box (top right while browsing) matches whatever's typed against each entry's town, state — full name or abbreviation — year, or season, all pulled from `location` and `date` in `gallery.json`. No extra fields needed. Non-matches drop out of the list; the detail pane jumps to the first match, or explains when there isn't one.
+
+## Seasons
+
+Seasons go by calendar month: Mar to May is spring, Jun to Aug summer, Sep to Nov fall, Dec to Feb winter (so a Sep 5 flight counts as fall).
+
+- **show** row under sort: one chip per season you've actually shot, plus **all**, each with a count. Tap one to show just that season; tap it again (or **all**) to go back. It works together with search, and the counts follow whatever's typed. The row hides itself if every 360 is from the same season.
+- **season** sort: groups the list under "fall 2026", "summer 2026", and so on. Winter spans new year, so Dec 2026 through Feb 2027 is "winter 2026/27".
 
 ## Where things live
 

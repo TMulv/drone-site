@@ -45,12 +45,18 @@
 
 <main id="browse">
   <section class="list">
-    <div class="sortbar" role="group" aria-label="sort">
-      <span class="sortLabel">sort</span>
-      <button class="sort" type="button" data-sort="date">date</button>
-      <button class="sort" type="button" data-sort="city">city</button>
-      <button class="sort" type="button" data-sort="state">state</button>
-      <button class="dir" id="sortDir" type="button" aria-label="reverse sort order"></button>
+    <div class="listTools">
+      <div class="sortbar" role="group" aria-label="sort">
+        <span class="sortLabel">sort</span>
+        <button class="sort" type="button" data-sort="date">date</button>
+        <button class="sort" type="button" data-sort="city">city</button>
+        <button class="sort" type="button" data-sort="state">state</button>
+        <button class="sort" type="button" data-sort="season">season</button>
+        <button class="dir" id="sortDir" type="button" aria-label="reverse sort order"></button>
+      </div>
+      <div class="sortbar seasonbar" id="seasonBar" role="group" aria-label="show one season" hidden>
+        <span class="sortLabel">show</span>
+      </div>
     </div>
     <ul id="entries"></ul>
   </section>

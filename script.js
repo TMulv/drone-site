@@ -20,6 +20,15 @@ function tween(ms, fn) {
 // ---------- search: town/state/year/season, matched against a precomputed string per item ----------
 // meteorological seasons, indexed by Date#getMonth() (0 = Jan)
 const SEASON_BY_MONTH = ['winter', 'winter', 'spring', 'spring', 'spring', 'summer', 'summer', 'summer', 'fall', 'fall', 'fall', 'winter'];
+const SEASONS = ['spring', 'summer', 'fall', 'winter']; // chip order
+// group header for the season sort; winter straddles new year, so Dec 2026 + Jan/Feb 2027 are all "winter 2026/27"
+function seasonGroup(d) {
+  if (!d) return 'undated';
+  const s = SEASON_BY_MONTH[d.getMonth()], y = d.getFullYear();
+  if (s !== 'winter') return `${s} ${y}`;
+  const start = d.getMonth() === 11 ? y : y - 1;
+  return `winter ${start}/${String(start + 1).slice(2)}`;
+}
 const STATE_NAME = { al: 'alabama', ak: 'alaska', az: 'arizona', ar: 'arkansas', ca: 'california', co: 'colorado', ct: 'connecticut', de: 'delaware', fl: 'florida', ga: 'georgia', hi: 'hawaii', id: 'idaho', il: 'illinois', in: 'indiana', ia: 'iowa', ks: 'kansas', ky: 'kentucky', la: 'louisiana', me: 'maine', md: 'maryland', ma: 'massachusetts', mi: 'michigan', mn: 'minnesota', ms: 'mississippi', mo: 'missouri', mt: 'montana', ne: 'nebraska', nv: 'nevada', nh: 'new hampshire', nj: 'new jersey', nm: 'new mexico', ny: 'new york', nc: 'north carolina', nd: 'north dakota', oh: 'ohio', ok: 'oklahoma', or: 'oregon', pa: 'pennsylvania', ri: 'rhode island', sc: 'south carolina', sd: 'south dakota', tn: 'tennessee', tx: 'texas', ut: 'utah', vt: 'vermont', va: 'virginia', wa: 'washington', wv: 'west virginia', wi: 'wisconsin', wy: 'wyoming', dc: 'district of columbia' };
 
 // ---------- three.js: nothing but the sphere you step into ----------
@@ -92,7 +101,8 @@ items.forEach(it => {
   it._town = town;
   it._state = STATE_NAME[st.toLowerCase()] || st;
   it._when = parseWhen(it);
-  it._search = [town, st, it._state, it._when && it._when.getFullYear(), it._when && SEASON_BY_MONTH[it._when.getMonth()], it.location]
+  it._season = it._when ? SEASON_BY_MONTH[it._when.getMonth()] : null;
+  it._search = [town, st, it._state, it._when && it._when.getFullYear(), it._season, it.location]
     .filter(Boolean).join(' ').toLowerCase();
 });
 $('total').textContent = pad(items.length);
@@ -120,9 +130,10 @@ const rows = items.map((it, i) => {
 // ---------- sorting ----------
 const byDate = (a, b) => (b._when || 0) - (a._when || 0); // newest first
 const SORTS = {
-  date:  { cmp: byDate, group: it => it._when ? it._when.toLocaleString('en-US', { month: 'long', year: 'numeric' }) : 'undated', dir: ['newest first', 'oldest first'] },
+  date:  { cmp: byDate, group: it => it._when ? it._when.toLocaleString('en-US', { month: 'long', year: 'numeric' }) : 'undated', dir: ['newest', 'oldest'] },
   city:  { cmp: (a, b) => a._town.localeCompare(b._town) || byDate(a, b), group: it => it.location, dir: ['a to z', 'z to a'] },
   state: { cmp: (a, b) => a._state.localeCompare(b._state) || a._town.localeCompare(b._town) || byDate(a, b), group: it => it._state, dir: ['a to z', 'z to a'] },
+  season: { cmp: byDate, group: it => seasonGroup(it._when), dir: ['newest', 'oldest'] },
 };
 let sortKey = 'date', sortRev = false, order = [];
 try { const s = JSON.parse(localStorage.getItem('sort')); if (s && SORTS[s.key]) { sortKey = s.key; sortRev = !!s.rev; } } catch {}
@@ -151,9 +162,10 @@ document.querySelectorAll('.sort').forEach(b => b.addEventListener('click', () =
 }));
 sortDirBtn.addEventListener('click', () => { sortRev = !sortRev; renderList(); });
 
-// ---------- search ----------
+// ---------- search + season chips (both apply at once) ----------
 let matched = null; // null = no search active; else one bool per item
-const visible = i => !matched || matched[i];
+let season = null;  // null = all seasons; else 'summer', 'fall', ...
+const visible = i => (!matched || matched[i]) && (!season || items[i]._season === season);
 
 function filterRows() { // hide non-matching rows, and any group header left with nothing under it
   rows.forEach((li, i) => { li.hidden = !visible(i); });
@@ -165,22 +177,47 @@ function filterRows() { // hide non-matching rows, and any group header left wit
   if (header) header.hidden = !any;
 }
 
-function applySearch(raw) {
-  const q = raw.trim().toLowerCase();
+function applyFilters() {
+  const raw = searchBox.value.trim(), q = raw.toLowerCase();
   searchClear.hidden = !q;
   matched = q ? items.map(it => it._search.includes(q)) : null;
   filterRows();
+  syncChips();
   const n = order.filter(visible).length;
   searchCount.textContent = !q ? '' : n ? `${n} of ${items.length}` : 'no matches';
   searchCount.classList.toggle('empty', !!q && n === 0);
   updateMarkers();
   fitMap();
-  if (n === 0) return showEmpty(raw.trim());
+  if (n === 0) return showEmpty(raw);
   if (sel < 0 || !visible(sel)) select(order.find(visible), { pan: false });
 }
-searchBox.addEventListener('input', e => applySearch(e.target.value));
-searchClear.addEventListener('click', () => { searchBox.value = ''; applySearch(''); searchBox.focus(); });
-addEventListener('keydown', e => { if (e.key === 'Escape' && document.activeElement === searchBox && searchBox.value) { searchBox.value = ''; applySearch(''); } });
+searchBox.addEventListener('input', applyFilters);
+searchClear.addEventListener('click', () => { searchBox.value = ''; applyFilters(); searchBox.focus(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && document.activeElement === searchBox && searchBox.value) { searchBox.value = ''; applyFilters(); } });
+
+// season chips: "all" plus one per season that has a 360. The row stays hidden until there are two seasons to pick between.
+// Clicking the lit chip again goes back to all. Counts follow whatever's typed in search.
+const seasonBar = $('seasonBar');
+const seasonsShot = SEASONS.filter(s => items.some(it => it._season === s));
+const chips = ['all', ...seasonsShot].map(s => {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.type = 'button'; b.dataset.season = s;
+  b.append(s, Object.assign(document.createElement('i'), { className: 'n' }));
+  b.addEventListener('click', () => { season = s === 'all' || s === season ? null : s; applyFilters(); });
+  return b;
+});
+seasonBar.append(...chips);
+seasonBar.hidden = seasonsShot.length < 2;
+function syncChips() {
+  for (const b of chips) {
+    const s = b.dataset.season;
+    const n = items.filter((it, i) => (!matched || matched[i]) && (s === 'all' || it._season === s)).length;
+    b.setAttribute('aria-pressed', String((season || 'all') === s));
+    b.classList.toggle('zero', n === 0);
+    b.lastChild.textContent = n;
+  }
+}
+syncChips();
 
 
 // ---------- conditions next to the photo (filled in by enrich.js) ----------
@@ -285,7 +322,7 @@ function showEmpty(query) {
   sel = -1;
   detailPhoto.hidden = true; detailImg.removeAttribute('src');
   detailTitle.textContent = 'nothing here';
-  detailMeta.replaceChildren(Object.assign(document.createElement('span'), { textContent: `no town, state, year, or season matches "${query}"` }));
+  detailMeta.replaceChildren(Object.assign(document.createElement('span'), { textContent: season ? `no ${season} 360s match "${query}"` : `no town, state, year, or season matches "${query}"` }));
   factsEl.replaceChildren();
   highlightTown(null, false);
 }
