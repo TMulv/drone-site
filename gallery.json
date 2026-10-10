@@ -33,6 +33,64 @@
   },
   "panoramas": [
     {
+      "file": "media/360/first-fall-colors.jpg",
+      "thumb": "media/360/thumbs/first-fall-colors.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Oct 10, 2026",
+      "time": "5:32 pm",
+      "alt": "114 m",
+      "flight": {
+        "frames": 26,
+        "duration_s": 48,
+        "shutter": [
+          "1/2000",
+          "1/500"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 220,
+        "gimbal": [-90, 15]
+      },
+      "sun": {
+        "alt": 8.9,
+        "az": 253,
+        "sunrise": "7:03 am",
+        "sunset": "6:23 pm",
+        "mins_to_sunset": 51,
+        "mins_since_sunrise": 629
+      }
+    },
+    {
+      "file": "media/360/still-pond.jpg",
+      "thumb": "media/360/thumbs/still-pond.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Oct 10, 2026",
+      "time": "5:29 pm",
+      "alt": "4 m",
+      "flight": {
+        "frames": 26,
+        "duration_s": 48,
+        "shutter": [
+          "1/800",
+          "1/240"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 111,
+        "gimbal": [-90, 15]
+      },
+      "sun": {
+        "alt": 9.4,
+        "az": 252,
+        "sunrise": "7:03 am",
+        "sunset": "6:23 pm",
+        "mins_to_sunset": 54,
+        "mins_since_sunrise": 626
+      }
+    },
+    {
       "file": "media/360/pines-and-peaks.jpg",
       "thumb": "media/360/thumbs/pines-and-peaks.jpg",
       "location": "Ward, CO",
