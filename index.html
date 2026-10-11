@@ -84,6 +84,20 @@
   </footer>
 </div>
 
+<dialog id="unlock" class="unlock" aria-labelledby="unlockTitle">
+  <form id="unlockForm">
+    <svg class="unlockIco" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="7" width="9" height="7" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
+    <h2 id="unlockTitle">this one's private</h2>
+    <label for="unlockPw">password</label>
+    <input id="unlockPw" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false" enterkeyhint="go">
+    <p id="unlockErr" class="unlockErr" role="alert" hidden>not quite. try again</p>
+    <div class="unlockBtns">
+      <button id="unlockCancel" class="pill" type="button">cancel</button>
+      <button id="unlockGo" class="pill go" type="submit">unlock</button>
+    </div>
+  </form>
+</dialog>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js" } }

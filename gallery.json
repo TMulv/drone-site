@@ -50,7 +50,8 @@
         "f": 2.8,
         "focal35": 24,
         "msl_m": 220,
-        "gimbal": [-90, 15]
+        "gimbal": [-90, 15],
+        "msl_fixed": true
       },
       "sun": {
         "alt": 8.9,
@@ -79,7 +80,8 @@
         "f": 2.8,
         "focal35": 24,
         "msl_m": 111,
-        "gimbal": [-90, 15]
+        "gimbal": [-90, 15],
+        "msl_fixed": true
       },
       "sun": {
         "alt": 9.4,
@@ -88,6 +90,41 @@
         "sunset": "6:23 pm",
         "mins_to_sunset": 54,
         "mins_since_sunrise": 626
+      }
+    },
+    {
+      "file": "media/360/locked/93b7bcad0480.bin",
+      "thumb": "media/360/locked/93b7bcad0480-thumb.bin",
+      "lock": {
+        "kdf": "PBKDF2-SHA256",
+        "iter": 600000,
+        "salt": "qPwxHmSyVLIPg24quAZfFw=="
+      },
+      "location": "Wyckoff, NJ",
+      "date": "Oct 10, 2026",
+      "time": "5:25 pm",
+      "alt": "3 m",
+      "sun": {
+        "alt": 10,
+        "az": 252,
+        "sunrise": "7:03 am",
+        "sunset": "6:23 pm",
+        "mins_to_sunset": 58,
+        "mins_since_sunrise": 622
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/100",
+          "1/25"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 110,
+        "gimbal": [-90, 15],
+        "msl_fixed": true
       }
     },
     {

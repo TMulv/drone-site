@@ -133,7 +133,10 @@ function summarizeSet(set) {
   const nums = k => shots.map(s => parseFloat(s.xmp[k])).filter(Number.isFinite);
   const exp = shots.map(s => s.exposure).filter(Boolean), isos = shots.map(s => s.iso).filter(Boolean), pitch = nums('GimbalPitchDegree');
   const shutter = x => x >= 1 ? `${+x.toFixed(1)}` : `1/${Math.round(1 / x)}`;
-  const msl = nums('AbsoluteAltitude');
+  const msl = nums('AbsoluteAltitude'), rel = nums('RelativeAltitude');
+  const avg = a => a.reduce((x, y) => x + y) / a.length;
+  // DJI's sea-level reading drifts, sometimes 100+ m low. A takeoff spot below sea level means it's off, so leave it out.
+  const mslOk = msl.length && !(rel.length && avg(msl) - avg(rel) < -10);
   return {
     dir: set.dir,
     start: times[0], // wall-clock seconds, as the drone recorded it
@@ -144,7 +147,7 @@ function summarizeSet(set) {
       iso: isos.length ? [Math.min(...isos), Math.max(...isos)] : null,
       f: shots[0].f ? +shots[0].f.toFixed(1) : null,
       focal35: shots[0].focal35 || null,
-      msl_m: msl.length ? Math.round(msl.reduce((a, b) => a + b) / msl.length) : null,
+      msl_m: mslOk ? Math.round(avg(msl)) : null,
       gimbal: pitch.length ? [Math.round(Math.min(...pitch)), Math.round(Math.max(...pitch))] : null,
     },
   };
@@ -218,7 +221,10 @@ function summarizeSet(set) {
       const near = sets.map(s => ({ s, gap: Math.abs(s.start - target) })).filter(x => x.gap <= 600 && x.s.flight.frames >= 5);
       const full = near.filter(x => x.s.flight.frames >= 20); // a full sphere is 26 shots; prefer it over a wide or 180 set shot nearby
       const best = (full.length ? full : near).sort((a, b) => a.gap - b.gap)[0];
-      if (best) { p.flight = best.s.flight; used.add(best.s.dir); row.flight = `ok (${best.s.flight.frames} frames)`; }
+      if (best) {
+        const fixed = p.flight && p.flight.msl_fixed ? { msl_m: p.flight.msl_m, msl_fixed: true } : {}; // corrected by hand: keep it
+        p.flight = { ...best.s.flight, ...fixed }; used.add(best.s.dir); row.flight = `ok (${best.s.flight.frames} frames)`;
+      }
       else row.flight = p.flight ? 'kept existing' : 'no matching photo set';
     }
   }

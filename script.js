@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { deriveKey, fetchDecrypted } from './lock.js';
 
 // ---------- helpers ----------
 const $ = id => document.getElementById(id);
@@ -68,7 +69,8 @@ const browseEl = $('browse'), viewerEl = $('viewer'), entriesEl = $('entries');
 const detailPhoto = $('detailPhoto'), detailImg = $('detailImg'), detailTitle = $('detailTitle'), detailMeta = $('detailMeta');
 const searchBox = $('search'), searchClear = $('searchClear'), searchCount = $('searchCount');
 const compassWrap = $('compassWrap'), backBtn = $('back'), hintEl = $('hint');
-const mapEl = $('map'), sortDirBtn = $('sortDir'), factsEl = $('detailFacts');
+const unlockDlg = $('unlock'), unlockForm = $('unlockForm'), unlockPw = $('unlockPw'), unlockErr = $('unlockErr'), unlockGo = $('unlockGo');
+const mapEl = $('map'), sortDirBtn = $('sortDir'), factsEl = $('detailFacts'), photoHint = document.querySelector('.photoHint');
 const phoneLayout = matchMedia('(max-width: 780px), (max-height: 500px)'); // phones, either way up: no detail pane, tapping a row steps straight in
 // phones get the search text at 16px (so iOS doesn't zoom in on tap), which leaves room for a shorter placeholder
 const syncPlaceholder = () => { $('search').placeholder = phoneLayout.matches ? 'town, state, year, season' : 'search town, state, year, season'; };
@@ -102,9 +104,18 @@ items.forEach(it => {
   it._state = STATE_NAME[st.toLowerCase()] || st;
   it._when = parseWhen(it);
   it._season = it._when ? SEASON_BY_MONTH[it._when.getMonth()] : null;
-  it._search = [town, st, it._state, it._when && it._when.getFullYear(), it._season, it.location]
+  it._locked = !!it.lock; // encrypted on the server; needs the password before it can be shown
+  it._search = [town, st, it._state, it._when && it._when.getFullYear(), it._season, it.location, it._locked && 'private locked']
     .filter(Boolean).join(' ').toLowerCase();
 });
+
+// ---------- private (password-locked) 360s ----------
+// Their pano + thumb are AES-encrypted files (see lock.js). Until unlocked they show a lock card and never load.
+const LOCK_PATH = '<rect x="3.5" y="7" width="9" height="7" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>';
+const LOCKED_THUMB = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400"><rect width="300" height="400" fill="#d9d3c8"/><g transform="translate(106 156) scale(5.5)" fill="none" stroke="#1b1a17" stroke-opacity=".6" stroke-width=".55" stroke-linecap="round">${LOCK_PATH}</g></svg>`);
+const lockIcon = () => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 16 16'); s.setAttribute('class', 'lockIco'); s.setAttribute('aria-hidden', 'true'); s.innerHTML = LOCK_PATH; return s; };
+const isShut = it => it._locked && !it._key;
+const thumbOf = it => isShut(it) ? LOCKED_THUMB : (it._thumbUrl || it.thumb || it.file);
 $('total').textContent = pad(items.length);
 
 // ---------- list rows (built once, reordered by sorting) ----------
@@ -114,9 +125,10 @@ const rows = items.map((it, i) => {
   const btn = document.createElement('button');
   btn.className = 'entry'; btn.type = 'button';
   const img = document.createElement('img');
-  img.src = it.thumb || it.file; img.alt = ''; img.loading = 'lazy';
+  img.src = thumbOf(it); img.alt = ''; img.loading = 'lazy';
   const text = document.createElement('span'); text.className = 'entryText';
   const strong = document.createElement('strong'); strong.textContent = it.location || '';
+  if (it._locked) { strong.append(lockIcon()); btn.setAttribute('aria-description', 'private, needs a password'); }
   const em = document.createElement('em'); em.textContent = metaLine(it).join(' · ');
   text.append(strong, em);
   btn.append(img, text);
@@ -282,7 +294,13 @@ function renderFacts(it) {
 
 // ---------- the drifting 360 behind the list ----------
 let texFor = -1, backdropTimer;
-const loadTex = i => loader.loadAsync(items[i].file).then(t => { t.colorSpace = THREE.SRGBColorSpace; return t; });
+async function loadTex(i) {
+  const it = items[i];
+  if (it._locked && !it._fileUrl) it._fileUrl = await fetchDecrypted(it.file, it._key);
+  const t = await loader.loadAsync(it._fileUrl || it.file);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
 function applyTex(tex, i) {
   if (sphere.material.map) sphere.material.map.dispose(); // one full-size pano in memory at a time
   sphere.material.map = tex; sphere.material.needsUpdate = true; sphere.visible = true; texFor = i;
@@ -290,7 +308,7 @@ function applyTex(tex, i) {
 function backdrop(i) { // waits a beat so arrowing down the list doesn't download every pano
   clearTimeout(backdropTimer);
   backdropTimer = setTimeout(async () => {
-    if (texFor === i) return;
+    if (texFor === i || isShut(items[i])) return; // a locked one keeps the last 360 drifting behind it
     const tex = await loadTex(i);
     if (sel !== i || mode !== 'browse') return tex.dispose(); // moved on while it loaded
     canvas.classList.add('dip');
@@ -309,8 +327,9 @@ function select(i, { pan = true, scroll = false } = {}) {
   rows[i].firstChild.setAttribute('aria-current', 'true');
   if (scroll) rows[i].scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
   detailPhoto.hidden = false;
-  detailPhoto.setAttribute('aria-label', `step inside the 360 from ${it.location}`);
-  detailImg.src = it.thumb || it.file; detailImg.alt = it.location || '';
+  detailPhoto.setAttribute('aria-label', isShut(it) ? `unlock the private 360 from ${it.location}` : `step inside the 360 from ${it.location}`);
+  photoHint.textContent = isShut(it) ? 'unlock' : 'step inside';
+  detailImg.src = thumbOf(it); detailImg.alt = it.location || '';
   detailTitle.textContent = it.location || '';
   fillMeta(detailMeta, it);
   renderFacts(it);
@@ -330,7 +349,7 @@ detailPhoto.addEventListener('click', () => { if (sel >= 0) enter(sel, detailImg
 
 // up/down walks the list, enter steps in (while browsing, outside the search box)
 addEventListener('keydown', e => {
-  if (mode !== 'browse' || document.activeElement === searchBox || phoneLayout.matches) return;
+  if (mode !== 'browse' || document.activeElement === searchBox || phoneLayout.matches || unlockDlg.open) return;
   if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
   const vis = order.filter(visible);
   if (!vis.length) return;
@@ -383,7 +402,7 @@ function openTown(loc, m) {
     const it = items[j];
     const b = document.createElement('button'); b.type = 'button';
     if (j === sel) b.setAttribute('aria-current', 'true');
-    const img = Object.assign(document.createElement('img'), { src: it.thumb || it.file, alt: '' });
+    const img = Object.assign(document.createElement('img'), { src: thumbOf(it), alt: '' });
     const cap = Object.assign(document.createElement('span'), { textContent: `${(it.date || '').replace(/,\s*\d{4}$/, '')}, ${it.time || ''}` });
     b.append(img, cap);
     b.addEventListener('click', () => {
@@ -425,9 +444,56 @@ function highlightTown(loc, pan) {
   reduceMotion ? map.setView(ll, 9) : map.flyTo(ll, 9, { duration: 0.9 });
 }
 
+// ---------- unlocking ----------
+async function tryPassword(it, password) { // resolves true if this password opens it
+  try {
+    const key = await deriveKey(password, it.lock);
+    it._thumbUrl = await fetchDecrypted(it.thumb, key); // a wrong password fails here, on the small file
+    it._key = key;
+    return true;
+  } catch { return false; }
+}
+function refreshLocked(it) {
+  const i = items.indexOf(it);
+  rows[i].querySelector('img').src = thumbOf(it);
+  if (sel === i) select(i, { pan: false });
+}
+async function unlockWith(password, first) { // opens `first`, then any other private 360 that shares the password
+  if (!(await tryPassword(first, password))) return false;
+  refreshLocked(first);
+  try { sessionStorage.setItem('unlock', password); } catch {} // this tab only; gone when it closes
+  for (const it of items) if (isShut(it) && await tryPassword(it, password)) refreshLocked(it);
+  return true;
+}
+function askUnlock(i) {
+  return new Promise(resolve => {
+    let ok = false;
+    unlockPw.value = ''; unlockErr.hidden = true; unlockGo.disabled = false;
+    unlockForm.onsubmit = async e => {
+      e.preventDefault();
+      if (!unlockPw.value) return unlockPw.focus();
+      unlockGo.disabled = true; unlockGo.textContent = 'unlocking';
+      ok = await unlockWith(unlockPw.value, items[i]);
+      unlockGo.disabled = false; unlockGo.textContent = 'unlock';
+      if (ok) unlockDlg.close();
+      else { unlockErr.hidden = false; unlockPw.select(); }
+    };
+    unlockDlg.addEventListener('close', () => resolve(ok), { once: true });
+    unlockDlg.showModal();
+    unlockPw.focus();
+  });
+}
+$('unlockCancel').addEventListener('click', () => unlockDlg.close());
+
 renderList();
 ensureMap();
 if (order.length) select(order[0], { pan: false });
+// came back in the same tab: quietly reopen anything the remembered password unlocks
+(async () => {
+  let pw = null; try { pw = sessionStorage.getItem('unlock'); } catch {}
+  if (!pw) return;
+  for (const it of items) if (isShut(it) && await tryPassword(it, pw)) refreshLocked(it);
+})();
 
 // ---------- words inside a pano: hidden every time you step in; tap, T, or the pill brings them back ----------
 const wordsBtn = $('words');
@@ -448,7 +514,7 @@ if (document.fullscreenEnabled) { // not on iPhone Safari, which only allows ful
   fsBtn.hidden = false;
   const toggleFs = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
   fsBtn.addEventListener('click', toggleFs);
-  addEventListener('keydown', e => { if (e.key === 'f' && !e.metaKey && !e.ctrlKey && document.activeElement !== searchBox) toggleFs(); });
+  addEventListener('keydown', e => { if (e.key === 'f' && !e.metaKey && !e.ctrlKey && !e.target.closest('input, dialog')) toggleFs(); });
   document.addEventListener('fullscreenchange', () => {
     const label = document.fullscreenElement ? 'exit full screen' : 'full screen';
     fsBtn.querySelector('.lbl').textContent = label;
@@ -545,6 +611,7 @@ async function enter(i, sourceImg = detailImg) {
   if (mode !== 'browse') return;
   const it = items[i];
   if (!it) return;
+  if (isShut(it)) { if (await askUnlock(i)) enter(i, sourceImg); return; }
   mode = 'entering'; active = i;
   setWords(false); // words start hidden every time you step in
 

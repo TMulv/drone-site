@@ -54,6 +54,16 @@ At the end of every run, `enrich.js` lists the `DCIM` folders that are **already
 
 Keep a set if you think you'll ever want to re-stitch it at better quality. Once it's deleted, the stitched JPG on the site is the best copy left.
 
+## Private 360s
+
+Some 360s are locked behind a password. They show up in the list with a lock, and the photo only appears after someone types the password.
+
+- The pano and thumbnail are stored encrypted (`media/360/locked/*.bin`, AES-GCM with a key made from the password by PBKDF2, 600,000 rounds). The real photo never goes on the site or into GitHub, so the lock holds even though the repo is public.
+- Its `gallery.json` entry has a `lock` block (the salt) and points `file`/`thumb` at the `.bin` files. Town, date, time, and height stay visible.
+- Once someone unlocks one, the password is remembered until that browser tab closes, and it opens any other private 360 with the same password.
+- The password can't be recovered from the site. Lose it and the locked copy is gone for good (the raw photos can be re-stitched and locked again).
+- `lock.js` does the encrypting and decrypting, for both the site and the upload page.
+
 ## Map
 
 Leaflet (loaded from cdnjs) with CARTO's light basemap, tinted warm in `style.css`. CARTO needs a free API key (carto.com/basemaps/apikey); it's `CARTO_KEY` near the map code in `script.js`. Keys are visible in the page by nature, so restrict yours to mulvey.world in the CARTO dashboard. Pins sit on town centers from `towns` in `gallery.json`. Clicking a pin selects that town's first 360 in the list; searching hides pins with no matches.
