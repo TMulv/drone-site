@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Upload · Aerial 360</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="upload.css">
+</head>
+<body>
+<header>
+  <a class="mark" href="./">Tyler Mulvey<span>upload</span></a>
+  <a class="pill" href="./">back to the site</a>
+</header>
+
+<main>
+  <!-- first visit on a device: paste the GitHub key -->
+  <section id="connect" class="card" hidden>
+    <h1>connect this device</h1>
+    <p>The upload page talks to GitHub with an access key that only works on <b>drone-site</b> and <b>drone-inbox</b>. Paste it once and this browser remembers it.</p>
+    <ol class="steps">
+      <li>Open <a id="tokenLink" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub's new token page</a> (fine-grained token).</li>
+      <li>Name it anything, like <i>mulvey.world upload</i>. Pick the longest expiration it offers.</li>
+      <li>Repository access: <b>only select repositories</b>, then pick <b>drone-site</b> and <b>drone-inbox</b>.</li>
+      <li>Permissions: <b>Contents</b> set to <b>read and write</b>. Nothing else.</li>
+      <li>Generate, copy, and paste it here.</li>
+    </ol>
+    <form id="connectForm" class="row">
+      <input id="tokenIn" type="password" placeholder="github_pat_..." autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="pill go" type="submit">connect</button>
+    </form>
+    <p id="connectMsg" class="msg" role="alert" hidden></p>
+  </section>
+
+  <section id="app" hidden>
+    <!-- pick photos -->
+    <section class="card" id="pick">
+      <h1>add 360s</h1>
+      <p class="sub">Plug in the SD card and pick its <b>DCIM</b> folder, or pick photos from your phone: the 26 shots from one sphere, or one finished 360.</p>
+      <div class="pickBtns">
+        <label class="pill go big" id="folderLabel">choose sd card folder<input id="folderIn" type="file" webkitdirectory multiple hidden></label>
+        <label class="pill big">choose photos<input id="filesIn" type="file" accept="image/jpeg,.jpg,.jpeg" multiple hidden></label>
+      </div>
+      <div id="drop" class="drop" hidden>or drop a folder here</div>
+      <div id="sets" hidden>
+        <ul id="setList" class="setList"></ul>
+        <div class="row end">
+          <span id="setSummary" class="muted"></span>
+          <button id="uploadBtn" class="pill go" type="button" disabled>upload</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- uploads waiting in drone-inbox -->
+    <section class="card" id="inbox">
+      <div class="row between">
+        <h1>inbox</h1>
+        <button id="refresh" class="pill small" type="button">refresh</button>
+      </div>
+      <p id="inboxEmpty" class="sub">Nothing waiting. Uploads show up here while they stitch (3 to 5 minutes each), then wait for you to publish.</p>
+      <div id="cards"></div>
+    </section>
+
+    <footer class="foot">
+      <span id="who"></span>
+      <button id="forget" class="link" type="button">forget this device's key</button>
+    </footer>
+  </section>
+</main>
+
+<template id="cardTpl">
+  <article class="item">
+    <div class="itemHead">
+      <strong class="itemTitle"></strong>
+      <span class="badge"></span>
+    </div>
+    <p class="itemSub muted"></p>
+    <div class="progress" hidden><i></i></div>
+    <div class="review" hidden>
+      <div class="previews">
+        <img class="thumb" alt="">
+        <a class="panoLink" target="_blank" rel="noopener"><img class="pano" alt="the full 360, flattened"></a>
+      </div>
+      <ul class="warnings"></ul>
+      <div class="fields">
+        <label>town<input name="location" list="townList" autocomplete="off"></label>
+        <label>date<input name="date" autocomplete="off"></label>
+        <label>time<input name="time" autocomplete="off"></label>
+        <label>file name<input name="slug" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+      </div>
+      <label class="check"><input type="checkbox" name="lock"> lock it behind a password</label>
+      <div class="lockRow" hidden>
+        <input name="password" type="password" placeholder="password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+      </div>
+    </div>
+    <pre class="error" hidden></pre>
+    <p class="msg" role="status" hidden></p>
+    <div class="row end actions">
+      <button class="pill discard" type="button">discard</button>
+      <button class="pill retry" type="button" hidden>try again</button>
+      <button class="pill go publish" type="button" hidden>publish</button>
+    </div>
+  </article>
+</template>
+<datalist id="townList"></datalist>
+
+<script type="module" src="upload.js"></script>
+</body>
+</html>

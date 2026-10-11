@@ -54,6 +54,16 @@ At the end of every run, `enrich.js` lists the `DCIM` folders that are **already
 
 Keep a set if you think you'll ever want to re-stitch it at better quality. Once it's deleted, the stitched JPG on the site is the best copy left.
 
+## Upload page
+
+`mulvey.world/upload` (not linked from the gallery) adds 360s without a Claude session:
+
+1. Pick the SD card's `DCIM` folder on a laptop (or drop it on the page), or pick photos on a phone: the 26 shots from one sphere, or one finished 360. Sets already on the site, in skip.json, or already uploaded are marked and left unticked.
+2. Each set goes to the private `TMulv/drone-inbox` repo as its own branch, where a GitHub Action stitches it with the same Hugin pipeline (3 to 5 minutes), looks up the town, weather, sun, and flight info, and fixes DJI's sea-level height.
+3. The inbox section shows each result with warnings (low shot near a house, black patches, missing GPS). Edit the town, date, time, or file name, tick "lock it" for a password, then publish. Publishing commits the files and the gallery entry here directly; Pages updates a minute later.
+
+It uses a fine-grained GitHub token (Contents read/write on drone-site and drone-inbox only), saved in that browser's localStorage. "Forget this device's key" at the bottom clears it.
+
 ## Private 360s
 
 Some 360s are locked behind a password. They show up in the list with a lock, and the photo only appears after someone types the password.
