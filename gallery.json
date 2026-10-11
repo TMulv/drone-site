@@ -39,6 +39,24 @@
       "date": "Oct 10, 2026",
       "time": "5:32 pm",
       "alt": "114 m",
+      "weather": {
+        "temp_f": 64,
+        "code": 1,
+        "cloud": 20,
+        "humidity": 45,
+        "wind_mph": 4,
+        "gust_mph": 7,
+        "wind_dir": 111,
+        "visibility_mi": 28
+      },
+      "sun": {
+        "alt": 8.9,
+        "az": 253,
+        "sunrise": "7:03 am",
+        "sunset": "6:23 pm",
+        "mins_to_sunset": 51,
+        "mins_since_sunrise": 629
+      },
       "flight": {
         "frames": 26,
         "duration_s": 48,
@@ -49,17 +67,9 @@
         "iso": [100, 100],
         "f": 2.8,
         "focal35": 24,
-        "msl_m": 220,
+        "msl_m": 229,
         "gimbal": [-90, 15],
         "msl_fixed": true
-      },
-      "sun": {
-        "alt": 8.9,
-        "az": 253,
-        "sunrise": "7:03 am",
-        "sunset": "6:23 pm",
-        "mins_to_sunset": 51,
-        "mins_since_sunrise": 629
       }
     },
     {
@@ -69,6 +79,24 @@
       "date": "Oct 10, 2026",
       "time": "5:29 pm",
       "alt": "4 m",
+      "weather": {
+        "temp_f": 68,
+        "code": 0,
+        "cloud": 14,
+        "humidity": 40,
+        "wind_mph": 3,
+        "gust_mph": 4,
+        "wind_dir": 187,
+        "visibility_mi": 31
+      },
+      "sun": {
+        "alt": 9.4,
+        "az": 252,
+        "sunrise": "7:03 am",
+        "sunset": "6:23 pm",
+        "mins_to_sunset": 54,
+        "mins_since_sunrise": 626
+      },
       "flight": {
         "frames": 26,
         "duration_s": 48,
@@ -79,17 +107,9 @@
         "iso": [100, 100],
         "f": 2.8,
         "focal35": 24,
-        "msl_m": 111,
+        "msl_m": 107,
         "gimbal": [-90, 15],
         "msl_fixed": true
-      },
-      "sun": {
-        "alt": 9.4,
-        "az": 252,
-        "sunrise": "7:03 am",
-        "sunset": "6:23 pm",
-        "mins_to_sunset": 54,
-        "mins_since_sunrise": 626
       }
     },
     {
@@ -104,6 +124,16 @@
       "date": "Oct 10, 2026",
       "time": "5:25 pm",
       "alt": "3 m",
+      "weather": {
+        "temp_f": 68,
+        "code": 0,
+        "cloud": 14,
+        "humidity": 40,
+        "wind_mph": 3,
+        "gust_mph": 4,
+        "wind_dir": 187,
+        "visibility_mi": 31
+      },
       "sun": {
         "alt": 10,
         "az": 252,
