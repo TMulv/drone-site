@@ -33,6 +33,74 @@
   },
   "panoramas": [
     {
+      "file": "media/360/locked/abbde8e21e98.bin",
+      "thumb": "media/360/locked/abbde8e21e98-thumb.bin",
+      "lock": {
+        "kdf": "PBKDF2-SHA256",
+        "iter": 600000,
+        "salt": "rVuGp+k8cOhvRbz5tMKS/w=="
+      },
+      "location": "Wyckoff, NJ",
+      "date": "Oct 14, 2026",
+      "time": "8:28 am",
+      "alt": "5 m",
+      "sun": {
+        "alt": 13.8,
+        "az": 114,
+        "sunrise": "7:07 am",
+        "sunset": "6:17 pm",
+        "mins_to_sunset": 589,
+        "mins_since_sunrise": 81
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/120",
+          "1/30"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 131,
+        "gimbal": [-90, 15]
+      }
+    },
+    {
+      "file": "media/360/locked/4395dc7c51cd.bin",
+      "thumb": "media/360/locked/4395dc7c51cd-thumb.bin",
+      "lock": {
+        "kdf": "PBKDF2-SHA256",
+        "iter": 600000,
+        "salt": "cHxzxX3nRAXdsOy8Q2w7qw=="
+      },
+      "location": "Wyckoff, NJ",
+      "date": "Oct 14, 2026",
+      "time": "8:23 am",
+      "alt": "7 m",
+      "sun": {
+        "alt": 12.9,
+        "az": 113,
+        "sunrise": "7:07 am",
+        "sunset": "6:17 pm",
+        "mins_to_sunset": 594,
+        "mins_since_sunrise": 76
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 50,
+        "shutter": [
+          "1/500",
+          "1/120"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 133,
+        "gimbal": [-90, 15]
+      }
+    },
+    {
       "file": "media/360/morning-over-the-canopy.jpg",
       "thumb": "media/360/thumbs/morning-over-the-canopy.jpg",
       "location": "Wyckoff, NJ",
