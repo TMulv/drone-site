@@ -33,6 +33,35 @@
   },
   "panoramas": [
     {
+      "file": "media/360/morning-over-the-canopy.jpg",
+      "thumb": "media/360/thumbs/morning-over-the-canopy.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Oct 14, 2026",
+      "time": "8:19 am",
+      "alt": "49 m",
+      "sun": {
+        "alt": 12.2,
+        "az": 112,
+        "sunrise": "7:07 am",
+        "sunset": "6:17 pm",
+        "mins_to_sunset": 598,
+        "mins_since_sunrise": 72
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/3200",
+          "1/800"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 175,
+        "gimbal": [-90, 15]
+      }
+    },
+    {
       "file": "media/360/first-fall-colors.jpg",
       "thumb": "media/360/thumbs/first-fall-colors.jpg",
       "location": "Wyckoff, NJ",
