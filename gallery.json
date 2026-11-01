@@ -33,6 +33,35 @@
   },
   "panoramas": [
     {
+      "file": "media/360/peak-fall-colors.jpg",
+      "thumb": "media/360/thumbs/peak-fall-colors.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Oct 31, 2026",
+      "time": "4:41 pm",
+      "alt": "52 m",
+      "sun": {
+        "alt": 11.7,
+        "az": 239,
+        "sunrise": "7:26 am",
+        "sunset": "5:53 pm",
+        "mins_to_sunset": 72,
+        "mins_since_sunrise": 555
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 50,
+        "shutter": [
+          "1/3200",
+          "1/800"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": null,
+        "gimbal": [-90, 15]
+      }
+    },
+    {
       "file": "media/360/locked/8fce19df97a9.bin",
       "thumb": "media/360/locked/8fce19df97a9-thumb.bin",
       "lock": {
