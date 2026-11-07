@@ -33,6 +33,93 @@
   },
   "panoramas": [
     {
+      "file": "media/360/deer-in-the-leaves.jpg",
+      "thumb": "media/360/thumbs/deer-in-the-leaves.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Nov 7, 2026",
+      "time": "4:17 pm",
+      "alt": "1 m",
+      "sun": {
+        "alt": 4.3,
+        "az": 244,
+        "sunrise": "6:34 am",
+        "sunset": "4:45 pm",
+        "mins_to_sunset": 28,
+        "mins_since_sunrise": 583
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 51,
+        "shutter": [
+          "1/160",
+          "1/40"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 137,
+        "gimbal": [-90, 15]
+      }
+    },
+    {
+      "file": "media/360/golden-hour-canopy.jpg",
+      "thumb": "media/360/thumbs/golden-hour-canopy.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Nov 7, 2026",
+      "time": "4:14 pm",
+      "alt": "66 m",
+      "sun": {
+        "alt": 4.8,
+        "az": 243,
+        "sunrise": "6:34 am",
+        "sunset": "4:45 pm",
+        "mins_to_sunset": 31,
+        "mins_since_sunrise": 580
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/1000",
+          "1/320"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 204,
+        "gimbal": [-90, 15]
+      }
+    },
+    {
+      "file": "media/360/leaf-covered-lane.jpg",
+      "thumb": "media/360/thumbs/leaf-covered-lane.jpg",
+      "location": "Wyckoff, NJ",
+      "date": "Nov 7, 2026",
+      "time": "4:03 pm",
+      "alt": "4 m",
+      "sun": {
+        "alt": 6.6,
+        "az": 242,
+        "sunrise": "6:34 am",
+        "sunset": "4:45 pm",
+        "mins_to_sunset": 42,
+        "mins_since_sunrise": 569
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 50,
+        "shutter": [
+          "1/240",
+          "1/60"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 142,
+        "gimbal": [-90, 15]
+      }
+    },
+    {
       "file": "media/360/peak-fall-colors.jpg",
       "thumb": "media/360/thumbs/peak-fall-colors.jpg",
       "location": "Wyckoff, NJ",
