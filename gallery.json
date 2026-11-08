@@ -29,9 +29,71 @@
       "ll": [35.5184, -83.0977],
       "county": "Haywood County",
       "elev_ft": 3022
+    },
+    "Fair Lawn, NJ": {
+      "ll": [40.94038, -74.13181],
+      "county": "Bergen County"
     }
   },
   "panoramas": [
+    {
+      "file": "media/360/interchange-and-open-lot.jpg",
+      "thumb": "media/360/thumbs/interchange-and-open-lot.jpg",
+      "location": "Fair Lawn, NJ",
+      "date": "Nov 8, 2026",
+      "time": "10:52 am",
+      "alt": "75 m",
+      "sun": {
+        "alt": 31.3,
+        "az": 166,
+        "sunrise": "6:35 am",
+        "sunset": "4:44 pm",
+        "mins_to_sunset": 352,
+        "mins_since_sunrise": 257
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 48,
+        "shutter": [
+          "1/8000",
+          "1/3200"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 110,
+        "gimbal": [-90, 15]
+      }
+    },
+    {
+      "file": "media/360/ballfields-and-clouds.jpg",
+      "thumb": "media/360/thumbs/ballfields-and-clouds.jpg",
+      "location": "Fair Lawn, NJ",
+      "date": "Nov 8, 2026",
+      "time": "10:48 am",
+      "alt": "55 m",
+      "sun": {
+        "alt": 31.1,
+        "az": 165,
+        "sunrise": "6:35 am",
+        "sunset": "4:44 pm",
+        "mins_to_sunset": 356,
+        "mins_since_sunrise": 253
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 48,
+        "shutter": [
+          "1/5000",
+          "1/1250"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 89,
+        "gimbal": [-90, 15]
+      }
+    },
     {
       "file": "media/360/deer-in-the-leaves.jpg",
       "thumb": "media/360/thumbs/deer-in-the-leaves.jpg",
