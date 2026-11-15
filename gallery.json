@@ -36,10 +36,52 @@
     },
     "Mendham, NJ": {
       "ll": [40.77593, -74.60071],
-      "county": "Morris County"
+      "county": "Morris County",
+      "elev_ft": 615
     }
   },
   "panoramas": [
+    {
+      "file": "media/360/front-walk-and-arbor.jpg",
+      "thumb": "media/360/thumbs/front-walk-and-arbor.jpg",
+      "location": "Mendham, NJ",
+      "date": "Nov 15, 2026",
+      "time": "4:09 pm",
+      "alt": "3 m",
+      "sun": {
+        "alt": 4.6,
+        "az": 241,
+        "sunrise": "6:45 am",
+        "sunset": "4:39 pm",
+        "mins_to_sunset": 30,
+        "mins_since_sunrise": 564
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 51,
+        "shutter": [
+          "1/120",
+          "1/30"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": 146,
+        "gimbal": [-90, 15],
+        "msl_fixed": true
+      },
+      "weather": {
+        "temp_f": 47,
+        "code": 2,
+        "cloud": 44,
+        "humidity": 52,
+        "wind_mph": 8,
+        "gust_mph": 17,
+        "wind_dir": 346,
+        "visibility_mi": 10,
+        "source": "KMMU (Morristown airport)"
+      }
+    },
     {
       "file": "media/360/picket-fence-curve.jpg",
       "thumb": "media/360/thumbs/picket-fence-curve.jpg",
@@ -65,9 +107,20 @@
         "iso": [100, 100],
         "f": 2.8,
         "focal35": 24,
-        "msl_m": null,
+        "msl_m": 168,
         "gimbal": [-90, 15],
         "msl_fixed": true
+      },
+      "weather": {
+        "temp_f": 47,
+        "code": 2,
+        "cloud": 44,
+        "humidity": 52,
+        "wind_mph": 8,
+        "gust_mph": 17,
+        "wind_dir": 346,
+        "visibility_mi": 10,
+        "source": "KMMU (Morristown airport)"
       }
     },
     {
@@ -95,9 +148,20 @@
         "iso": [100, 100],
         "f": 2.8,
         "focal35": 24,
-        "msl_m": null,
+        "msl_m": 160,
         "gimbal": [-90, 15],
         "msl_fixed": true
+      },
+      "weather": {
+        "temp_f": 47,
+        "code": 2,
+        "cloud": 44,
+        "humidity": 52,
+        "wind_mph": 9,
+        "gust_mph": 18,
+        "wind_dir": 347,
+        "visibility_mi": 10,
+        "source": "KMMU (Morristown airport)"
       }
     },
     {
