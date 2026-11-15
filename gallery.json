@@ -33,9 +33,73 @@
     "Fair Lawn, NJ": {
       "ll": [40.94038, -74.13181],
       "county": "Bergen County"
+    },
+    "Mendham, NJ": {
+      "ll": [40.77593, -74.60071],
+      "county": "Morris County"
     }
   },
   "panoramas": [
+    {
+      "file": "media/360/picket-fence-curve.jpg",
+      "thumb": "media/360/thumbs/picket-fence-curve.jpg",
+      "location": "Mendham, NJ",
+      "date": "Nov 15, 2026",
+      "time": "4:08 pm",
+      "alt": "25 m",
+      "sun": {
+        "alt": 4.8,
+        "az": 240,
+        "sunrise": "6:45 am",
+        "sunset": "4:39 pm",
+        "mins_to_sunset": 31,
+        "mins_since_sunrise": 563
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 49,
+        "shutter": [
+          "1/1600",
+          "1/400"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": null,
+        "gimbal": [-90, 15],
+        "msl_fixed": true
+      }
+    },
+    {
+      "file": "media/360/lawn-and-low-sun.jpg",
+      "thumb": "media/360/thumbs/lawn-and-low-sun.jpg",
+      "location": "Mendham, NJ",
+      "date": "Nov 15, 2026",
+      "time": "4:02 pm",
+      "alt": "17 m",
+      "sun": {
+        "alt": 5.7,
+        "az": 239,
+        "sunrise": "6:45 am",
+        "sunset": "4:39 pm",
+        "mins_to_sunset": 37,
+        "mins_since_sunrise": 557
+      },
+      "flight": {
+        "frames": 26,
+        "duration_s": 51,
+        "shutter": [
+          "1/1250",
+          "1/320"
+        ],
+        "iso": [100, 100],
+        "f": 2.8,
+        "focal35": 24,
+        "msl_m": null,
+        "gimbal": [-90, 15],
+        "msl_fixed": true
+      }
+    },
     {
       "file": "media/360/interchange-and-open-lot.jpg",
       "thumb": "media/360/thumbs/interchange-and-open-lot.jpg",
